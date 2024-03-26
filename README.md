@@ -4,8 +4,9 @@
 - Choose a cli library
 
 ## Setup
+https://python-poetry.org/docs/
 ```bash
-pip install -e .
+poetry install
 ```
 
 ## Run the CLI Tool locally
@@ -25,7 +26,7 @@ your_command_name [arguments]
 ## Choice of Libraries
 Several excellent libraries can help you create CLI tools in Python. The most popular ones include:
 
-- **Typer**
+- **Typer**: https://github.com/tiangolo/typer
 - **Argparse**: A module that allows for easy parsing of command-line options, arguments, and sub-commands. It is included in Python’s standard library.
 - **Click**: A package for creating beautiful command-line interfaces in a composable way with as little code as necessary. It’s very user-friendly and flexible.
 - **Docopt**: Enables you to create CLI applications by merely defining the interface documentation in a specific format that `docopt` uses to create a parser.
