@@ -1,5 +1,8 @@
 # GPT Agent
 
+## Tasks
+- Choose a cli library
+
 ## Setup
 ```bash
 pip install -e .
@@ -7,7 +10,7 @@ pip install -e .
 
 ## Run the CLI Tool locally
 ```bash
-python3 -m agent_gpt.main ~/tmp.md
+python3 -m agent_gpt.main thread.md
 ```
 
 ### If Your CLI Tool is an Installed Command
@@ -18,13 +21,11 @@ If you've set up your package such that installing it creates a command-line exe
 your_command_name [arguments]
 ```
 
-
-- Choose a cli library
-
 # Notes
 ## Choice of Libraries
 Several excellent libraries can help you create CLI tools in Python. The most popular ones include:
 
+- **Typer**
 - **Argparse**: A module that allows for easy parsing of command-line options, arguments, and sub-commands. It is included in Python’s standard library.
 - **Click**: A package for creating beautiful command-line interfaces in a composable way with as little code as necessary. It’s very user-friendly and flexible.
 - **Docopt**: Enables you to create CLI applications by merely defining the interface documentation in a specific format that `docopt` uses to create a parser.
