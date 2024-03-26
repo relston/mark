@@ -1,9 +1,11 @@
 # GPT Agent
 
-## Tasks
-- Choose a cli library
+## Install
+```bash
+pipx install git+https://github.com/relston/agent_gpt.git
+```
 
-## Setup
+## Local Setup
 https://python-poetry.org/docs/
 ```bash
 poetry install
@@ -11,7 +13,7 @@ poetry install
 
 ## Run the CLI Tool locally
 ```bash
-poetry run python -m agent_gpt thread.md
+poetry run agent_gpt thread.md
 ```
 
 ### If Your CLI Tool is an Installed Command

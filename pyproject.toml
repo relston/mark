@@ -14,6 +14,9 @@ click = "^8.1.7"
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
 
+[tool.poetry.scripts]
+agent_gpt = "agent_gpt.__main__:cli"
+
 [build-system]
 requires = ["poetry-core>=1.0.0"]
 build-backend = "poetry.core.masonry.api"
