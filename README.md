@@ -11,7 +11,7 @@ poetry install
 
 ## Run the CLI Tool locally
 ```bash
-poetry run python -m agent_gpt.main thread.md
+poetry run python -m agent_gpt thread.md
 ```
 
 ### If Your CLI Tool is an Installed Command
