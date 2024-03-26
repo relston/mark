@@ -11,7 +11,7 @@ poetry install
 
 ## Run the CLI Tool locally
 ```bash
-python3 -m agent_gpt.main thread.md
+poetry run python -m agent_gpt.main thread.md
 ```
 
 ### If Your CLI Tool is an Installed Command
@@ -29,6 +29,9 @@ Several excellent libraries can help you create CLI tools in Python. The most po
 - **Typer**: https://github.com/tiangolo/typer
 - **Argparse**: A module that allows for easy parsing of command-line options, arguments, and sub-commands. It is included in Python’s standard library.
 - **Click**: A package for creating beautiful command-line interfaces in a composable way with as little code as necessary. It’s very user-friendly and flexible.
+    https://click.palletsprojects.com/en/8.0.x/api/
+    https://github.com/pallets/click/tree/main/examples/inouts
+- **Fire**: A library for automatically generating command-line interfaces (CLIs) from Python objects. It’s particularly useful for quickly creating CLIs for existing codebases.
 - **Docopt**: Enables you to create CLI applications by merely defining the interface documentation in a specific format that `docopt` uses to create a parser.
 
 Choosing the right library depends on your specific needs, such as simplicity, customization, and the complexity of commands you plan to support.

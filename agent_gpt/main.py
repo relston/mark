@@ -1,9 +1,8 @@
 import os
-import sys
 import yaml
-from IPython import embed
 from openai import OpenAI
-import os
+import click
+
 open_ai_key = os.getenv('OPENAI_API_KEY')
 client = OpenAI(api_key=open_ai_key)
 
@@ -29,62 +28,24 @@ for filename in os.listdir(os.path.expanduser("~/.gpt/agents")):
         agent_name = os.path.splitext(filename)[0]        
         agents[agent_name] = yaml.safe_load(file)
 
-
-# Detecting input file and agent
-input_file = None
-selected_agent = None
-def detect_file(param):
-    global input_file  # Add this line to access the global variable
-    if os.path.exists(param):
-        input_file = param
-
-def detect_agent(param):
-    global selected_agent  # Add this line to access the global variable
-    if param in agents:
-        selected_agent = agents[param]
-
-if len(sys.argv) > 1:
-    params = sys.argv.copy()
-    params.pop(0)
-    for param in params:
-        detect_file(param)
-        detect_agent(param)
-
-if selected_agent is None:
-    selected_agent = agents['default']
-
-if input_file is None:
-    if not sys.stdin.isatty():
-        data = sys.stdin.read()
-    else:
-        # this is a usecase I have not considered yet but it seems reasonable 
-        data = input("Enter data: ")
-        print("Data entered:", data)
-else:
-    with open(input_file, "r") as file:
-        data = file.read()
-
 # Create request 
-messages = []
-system_message = {
-    "role": "system",
-    "content": selected_agent['system']
-}
-messages.append(system_message)
-messages.append({ "role": "user", "content": data})
+def get_completion(prompt, selected_agent):
+    messages = []
+    system_message = {
+        "role": "system",
+        "content": selected_agent['system']
+    }
+    messages.append(system_message)
+    messages.append({ "role": "user", "content": prompt})
 
-chat_completion = client.chat.completions.create(
-    messages=messages,
-    model="gpt-4-turbo-preview",
-)
-# embed()   
-# If this is a file I need to append this message to the file
-# print(chat_completion.choices[0].message.content)
-# I might also need my own parsing format for understanding the various chunks of the chain. Give OpenAI the context it needs to do it's best work.
-# If this is a file I need to append this message to the file
-if input_file:
-    with open(input_file, "a") as file:
-        message = chat_completion.choices[0].message.content
+    chat_completion = client.chat.completions.create(
+        messages=messages,
+        model="gpt-4-turbo-preview",
+    )
+    return chat_completion.choices[0].message.content
+
+def write_response(file_name, message):
+    with open(file_name, "a") as file:
         content = f"""
 **GPT Response (model: gpt-4-turbo-preview)**
 {message}
@@ -92,3 +53,25 @@ if input_file:
 **User Response**
 """
         file.write(content)
+
+@click.command()
+@click.argument('input', type=click.File("r"))
+@click.option('--agent', type=click.STRING, default='default')
+def cli(input, agent):
+    """
+    This is a command line tool that processes a file and uses an agent to generate a response.
+    """
+    file_name = input.name
+    if file_name == '<stdin>':
+        file_name = None
+    prompt = input.read()
+    input.close()
+    selected_agent = agents[agent]
+    response = get_completion(prompt, selected_agent)
+    if file_name:
+        write_response(file_name, response)
+    else:
+        click.echo(response)
+    
+if __name__ == '__main__':
+    cli()
