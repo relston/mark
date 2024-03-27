@@ -18,8 +18,12 @@ poetry run agent_gpt thread.md
 
 
 # Tasks
-- add tests
+- write some new agents
 - segment code into separate modules
+    - cli.py
+    - openai.py
+    - agents.py
+- add tests
 - add agent management commands
 
 
