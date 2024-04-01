@@ -18,7 +18,6 @@ poetry run agent_gpt thread.md
 
 
 # Tasks
-- write some new agents
 - segment code into separate modules
     - cli.py
     - openai.py

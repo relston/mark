@@ -6,6 +6,7 @@ from openai import OpenAI
 # Constants
 OPEN_AI_API_KEY = os.getenv('OPENAI_API_KEY')
 AGENTS_DIR = os.path.expanduser("~/.gpt/agents")
+MODEL = "gpt-4-turbo-preview"
 
 client = OpenAI(api_key=OPEN_AI_API_KEY)
 
@@ -33,17 +34,17 @@ def get_completion(prompt, selected_agent):
 
     chat_completion = client.chat.completions.create(
         messages=messages,
-        model="gpt-4-turbo-preview",
+        model=MODEL,
     )
     return chat_completion.choices[0].message.content
 
-def write_response(file_name, message):
+def write_response(file_name, message, agent='default'):
     """
     Append the GPT response to the given file.
     """
     with open(file_name, "a") as file:
         content = f"""
-**GPT Response (model: gpt-4-turbo-preview)**
+**GPT Response (model: {MODEL}, agent: {agent})**
 {message}
 
 **User Response**
@@ -65,7 +66,7 @@ def cli(input, agent):
     response = get_completion(prompt, selected_agent)
 
     if file_name:
-        write_response(file_name, response)
+        write_response(file_name, response, agent)
     else:
         click.echo(response)
 
