@@ -16,7 +16,19 @@ poetry install
 poetry run agent_gpt thread.md
 ```
 
-
 # Tasks
 - add tests
 - add agent management commands
+
+# Design direction
+This gets parsed and uploaded to gpt vision as context
+```markdown
+[img](path/to/img.png) 
+```
+
+Local links get pulled into the context as well
+```markdown
+[link](local/link/to/file.md) 
+```
+
+Later: introduce agent modifier settings to control the specifics of how the agent treats these.
