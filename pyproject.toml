@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "agent_gpt"
+name = "mark"
 version = "0.1.0"
 description = ""
 authors = ["Ryan Elston <elston.ryan@gmail.com>"]
@@ -15,7 +15,7 @@ click = "^8.1.7"
 pytest = "^6.2.5"
 
 [tool.poetry.scripts]
-agent_gpt = "agent_gpt.__main__:cli.command"
+mark = "mark.__main__:cli.command"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

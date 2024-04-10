@@ -1,7 +1,9 @@
 import click
-from agent_gpt import agents
-from agent_gpt import llm
-from agent_gpt import  writer
+from mark import (
+    agents,
+    llm,
+    writer
+) 
 
 @click.command()
 @click.argument('input', type=click.File("r"))
@@ -13,7 +15,6 @@ def command(input, agent):
     file_name = input.name if input.name != '<stdin>' else None
     prompt = input.read()
     input.close()
-    print('Something happening here')
 
     selected_agent = agents.list.get(agent, 'default')
     response = llm.get_completion(prompt, selected_agent)

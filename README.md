@@ -1,8 +1,9 @@
-# GPT Agent
+# Mark
+A CLI tool for interacting with LLMs using markdown files.
 
 ## Install
 ```bash
-pipx install git+https://github.com/relston/agent_gpt.git
+pipx install git+https://github.com/relston/mark.git
 ```
 
 ## Local Setup
@@ -13,12 +14,11 @@ poetry install
 
 ## Run the CLI Tool locally
 ```bash
-poetry run agent_gpt thread.md
+poetry run mark thread.md
 ```
 
 # Tasks
 - add tests
-- add agent management commands
 
 # Design direction
 This gets parsed and uploaded to gpt vision as context
@@ -32,3 +32,7 @@ Local links get pulled into the context as well
 ```
 
 Later: introduce agent modifier settings to control the specifics of how the agent treats these.
+
+# Inspiration
+https://github.com/simonw/llm/
+https://github.com/relston/gpt-cli

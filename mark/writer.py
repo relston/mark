@@ -1,4 +1,4 @@
-from agent_gpt import llm
+from mark import llm
 
 def write_response(file_name, message, agent='default', model=llm.MODEL):
     """
