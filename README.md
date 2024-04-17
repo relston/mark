@@ -17,6 +17,12 @@ poetry install
 poetry run mark thread.md
 ```
 
+## Run the tests
+```bash
+poetry run python -m pytest
+poetry run python -m pytest tests/test_llm.py
+```
+
 # Tasks
 - add tests
 

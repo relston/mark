@@ -20,4 +20,5 @@ def get_completion(prompt, selected_agent):
         messages=messages,
         model=MODEL,
     )
+
     return chat_completion.choices[0].message.content
