@@ -1,20 +1,19 @@
 import os
 from openai import OpenAI
 
-# Constants
 OPEN_AI_API_KEY = os.getenv('OPENAI_API_KEY')
-MODEL = "gpt-4-turbo-preview"
+MODEL = "gpt-4-turbo"
 
 client = OpenAI(api_key=OPEN_AI_API_KEY)
 
-def get_completion(prompt, selected_agent):
+def get_completion(llm_request, selected_agent):
     """
     Get completion from the OpenAI model for the given prompt and agent.
     """
-    messages = [
-        {"role": "system", "content": selected_agent['system']},
-        {"role": "user", "content": prompt}
-    ]
+    system_message = {"role": "system", "content": selected_agent['system']}
+    user_message = {"role": "user", "content": llm_request.to_payload()}
+    
+    messages = [system_message, user_message]
 
     chat_completion = client.chat.completions.create(
         messages=messages,

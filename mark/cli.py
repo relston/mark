@@ -2,6 +2,7 @@ import click
 from mark import (
     agents,
     llm,
+    llm_request,
     writer
 ) 
 
@@ -16,8 +17,10 @@ def command(input, agent):
     prompt = input.read()
     input.close()
 
+    request = llm_request.parse_markdown_content(prompt)
+
     selected_agent = agents.list.get(agent, 'default')
-    response = llm.get_completion(prompt, selected_agent)
+    response = llm.get_completion(request, selected_agent)
 
     if file_name:
         writer.write_response(file_name, response, agent)

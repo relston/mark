@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mark"
-version = "0.1.0"
+version = "0.2.0"
 description = ""
 authors = ["Ryan Elston <elston.ryan@gmail.com>"]
 
@@ -10,6 +10,8 @@ PyYAML = "6.0.1"
 ipython = "8.21.0"
 openai = "1.14.2"
 click = "^8.1.7"
+beautifulsoup4 = "^4.12.3"
+markdown = "^3.6"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
