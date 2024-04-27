@@ -24,7 +24,7 @@ poetry run python -m pytest tests/test_llm.py
 ```
 
 # Tasks
-- add tests
+- Use MarkdownFile class to corrected image paths for submission
 
 # Design direction
 This gets parsed and uploaded to gpt vision as context
