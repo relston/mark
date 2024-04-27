@@ -12,7 +12,6 @@ def get_completion(llm_request, selected_agent):
     """
     system_message = {"role": "system", "content": selected_agent['system']}
     user_message = {"role": "user", "content": llm_request.to_payload()}
-    
     messages = [system_message, user_message]
 
     chat_completion = client.chat.completions.create(
