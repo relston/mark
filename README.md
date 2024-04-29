@@ -23,6 +23,9 @@ poetry run python -m pytest
 poetry run python -m pytest tests/test_llm.py
 ```
 
+# TODO
+- Add support for url's in the markdown
+
 # Design direction
 This gets parsed and uploaded to gpt vision as context
 ```markdown
