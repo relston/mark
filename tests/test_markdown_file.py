@@ -38,7 +38,10 @@ def test_image_paths_resolution(mock_file):
     with mock_file(markdown_file_path, markdown_content):
         with open(markdown_file_path, 'r', encoding='UTF-8') as file:
             md_file = MarkdownFile(file)
-            resolved_images = md_file.images()
 
+            assert md_file.file_path == markdown_file_path
+            assert md_file.content == markdown_content
+
+            resolved_images = md_file.images
             # Checking if each dictionary in the list matches the expected results
             assert all(img in resolved_images for img in expected_images)

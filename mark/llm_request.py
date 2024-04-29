@@ -3,14 +3,11 @@ from bs4 import BeautifulSoup
 from IPython import embed
 import base64
 
-"""
-Take a string of markdown content and return an LLMRequest object
-This has the original markdown content and a list of Image objects
-found in the markdown content
-"""
-
 class LLMRequest:
     def __init__(self, body, images):
+        """
+        Can serialize itself into a payload that can be sent to the OpenAI API (potentially others in the future)
+        """
         self.body = body
         self.images = images
 
@@ -43,8 +40,9 @@ class Image:
             encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
             return encoded_image
 
-def parse_markdown_content(markdown_content):
-    html_content = markdown(markdown_content)
-    soup = BeautifulSoup(html_content, 'html.parser')
-    images = [Image(img['src']) for img in soup.find_all('img')]
-    return LLMRequest(markdown_content, images)
+def from_markdown_file(markdown_file):
+    images = []
+    for image_info in markdown_file.images:
+        image = Image(image_info['image_path'])
+        images.append(image)
+    return LLMRequest(markdown_file.content, images)
