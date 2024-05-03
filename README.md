@@ -29,7 +29,7 @@ poetry run python -m pytest tests/test_llm.py
 # Design direction
 This gets parsed and uploaded to gpt vision as context
 ```markdown
-[img](path/to/img.png) 
+![img](path/to/img.png) 
 ```
 
 Local links get pulled into the context as well

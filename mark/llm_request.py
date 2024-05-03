@@ -1,5 +1,3 @@
-from markdown import markdown
-from bs4 import BeautifulSoup
 from IPython import embed
 import base64
 
@@ -15,7 +13,7 @@ class LLMRequest:
         if self.images:
             content_segments = [{ 'type': 'text', 'text': self.body }]
             for image in self.images:
-                content_segments.append({ 'type': 'image_url', 'image_url': { 'url': image.url } })
+                content_segments.append({ 'type': 'image_url', 'image_url': { 'url': image.url } }) if image.url else None
             return content_segments
         return self.body
 
@@ -23,16 +21,15 @@ class LLMRequest:
 class Image:
     def __init__(self, path):
         self._path = path
+        self.url = None
 
-    @property
-    def url(self):
         if self._path.startswith("http"):
-            return self._path 
+            self.url = self._path
         else:
             try:
                 base64_image = self._base64_encode()
-                return f"data:image/jpeg;base64,{base64_image}"
-            except FileNotFoundError as e:
+                self.url = f"data:image/jpeg;base64,{base64_image}"
+            except (FileNotFoundError, IsADirectoryError) as e:
                 print(f"Sorry, {e.filename} does not exist.")
 
     def _base64_encode(self):
