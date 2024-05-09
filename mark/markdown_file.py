@@ -5,7 +5,6 @@ import os
 """
 MarkdownFile
 Parses the markdown and extracts image elements from the file, resolving the paths of local images.
-TODO: Add support for other elements like links, etc. 
 """
 class MarkdownFile:
     def __init__(self, file_wrapper: TextIOWrapper):
@@ -46,3 +45,27 @@ class MarkdownFile:
                 images_info.append({'alt': alt_text, 'src': src, 'image_path': resolved_path})
 
         return images_info
+    
+    @property
+    def links(self):
+        """
+        Parses the markdown file to find all links, capturing their text and URL.
+        Returns a list of dictionaries with keys 'text' and 'url'.
+        """
+        # Regular expression to find Markdown link syntax
+        # it will match `[text](url)` but not `![text](url)`
+        link_pattern = r'(?<!\!)\[([^\]]+)\]\(([^)]+)\)'
+        links_info = []
+
+        # Find all matches of the pattern in the line
+        matches = re.findall(link_pattern, self.file_content)
+        # For each match, create a dictionary with text and URL keys
+        for text, url in matches:
+            if url.startswith("http"):
+                links_info.append({'text': text, 'url': url})
+            else:
+                resolved_path = os.path.normpath(os.path.join(self.file_dir, url))
+                links_info.append({'text': text, 'url': resolved_path})
+
+        return links_info
+
