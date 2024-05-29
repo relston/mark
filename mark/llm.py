@@ -2,7 +2,7 @@ import os
 from openai import OpenAI
 
 OPEN_AI_API_KEY = os.getenv('OPENAI_API_KEY')
-MODEL = "gpt-4-turbo"
+MODEL = "gpt-4o-2024-05-13"
 
 client = OpenAI(api_key=OPEN_AI_API_KEY)
 

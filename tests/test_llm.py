@@ -21,7 +21,7 @@ def test_get_completion(openai_mock, mock_llm_request):
     
     # Assert that the OpenAI API was called with the expected arguments
     openai_mock.chat.completions.create.assert_called_once_with(
-        model='gpt-4-turbo',
+        model='gpt-4o-2024-05-13',
         messages=[
             {'role': 'system', 'content': SELECTED_AGENT['system']},
             {'role': 'user', 'content':  mock_llm_request.to_payload()}
