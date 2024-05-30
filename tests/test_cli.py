@@ -1,4 +1,3 @@
-from click.testing import CliRunner
 from mark.cli import command
 from textwrap import dedent
 
@@ -15,22 +14,31 @@ def test_command_default(create_file, mock_llm_response):
 
     # Given a markdown file with the following content
     mock_markdown_file_content = dedent("""
-    Describe these images in vivid detail
+    A Markdown file with various images and links
+                                        
+    Local image:
+    ![Local Image](./images/sample.png)
 
-    ![So horrifying](https://example.com/image.jpg)
+    Remote image:
+    ![Remote Image](https://example.com/image.png)
 
-    ![So beautiful](./image2.jpg)
+    Relative image outside directory:
+    ![Outside Image](../images/outside.png)
 
-    ***GPT Response (model: test_model, agent: pytest)**
-    Oh god, I can't even look at that first image. It's so horrifying. The second one is so beautiful though.
+    External url link:
+    [External URL](https://example.com)
 
-    ***User Response**
-    I know, right? I can't believe how different they are.
+    Local link:
+    [Local Link](./local.md)
+
+    Relative link outside directory:
+    [Outside Link](../outside.md)
     """)
 
     # and the files exists in the file system
     markdown_file = create_file("test.md", mock_markdown_file_content)
-    create_file("image2.jpg", b"This is an image", binary=True)
+    create_file("./images/sample.png", b"sample image data", binary=True)
+    create_file("../images/outside.png", b"outside image data", binary=True)
 
     # and llm returning this response
     mock_llm_response.return_value = "Test completion"
@@ -42,8 +50,9 @@ def test_command_default(create_file, mock_llm_response):
         {'role': 'system', 'content': 'You are a helpful LLM agent that always returns your response in Markdown format.'}, 
         {'role': 'user', 'content': [
                 {'type': 'text', 'text': mock_markdown_file_content}, 
-                {'type': 'image_url', 'image_url': {'url': 'https://example.com/image.jpg'}}, 
-                {'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,VGhpcyBpcyBhbiBpbWFnZQ=='}}
+                {'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,c2FtcGxlIGltYWdlIGRhdGE='}}, 
+                {'type': 'image_url', 'image_url': {'url': 'https://example.com/image.png'}}, 
+                {'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,b3V0c2lkZSBpbWFnZSBkYXRh'}}
             ]
         }
     ]
