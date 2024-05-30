@@ -1,4 +1,3 @@
-from IPython import embed
 import base64
 
 class LLMRequest:
@@ -42,4 +41,5 @@ def from_markdown_file(markdown_file):
     for image_info in markdown_file.images:
         image = Image(image_info['image_path'])
         images.append(image)
+
     return LLMRequest(markdown_file.content, images)

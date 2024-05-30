@@ -1,5 +1,31 @@
 import pytest
 from unittest.mock import MagicMock, mock_open, patch
+from contextlib import ExitStack, contextmanager
+
+
+@pytest.fixture
+def mock_llm_response():
+    with patch('mark.llm._call_model') as mock:
+        yield mock
+
+@pytest.fixture
+def tmp_dir(tmp_path):
+    d = tmp_path / 'tmp'
+    d.mkdir()
+    return d
+
+@pytest.fixture
+def create_file(tmp_dir):
+    def _create_file(file_path, content, binary=False):
+        file = tmp_dir / file_path
+        if binary:
+            file.write_bytes(content)
+        else:
+            file.write_text(content, encoding="utf-8")
+        return file
+    return _create_file
+
+
 
 @pytest.fixture
 def mock_file():
@@ -11,6 +37,29 @@ def mock_file():
     return _mock_file
 
 
+@pytest.fixture
+def mock_files():
+    """
+    Creates a factory for a context manager that patches multiple files.
+    
+    Args:
+    - file_contents_dict: A dictionary where keys are file paths and values are file contents to be mocked.
+    
+    Returns:
+    - Context manager for patching multiple files.
+    """
+    
+    @contextmanager
+    def _mock_files(file_contents_dict):
+        mocks = {file: mock_open(read_data=content) for file, content in file_contents_dict.items()}
+        patches = [patch('builtins.open', mocks[file]) for file in file_contents_dict]
+        
+        with ExitStack() as stack:
+            for p in patches:
+                stack.enter_context(p)
+            yield
+
+    return _mock_files
 
 mock_markdown_file_content = """
 Describe these images in vivid detail
