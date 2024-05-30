@@ -2,7 +2,8 @@ import os
 import yaml
 
 # Initialize and setup
-AGENTS_DIR = os.path.expanduser("~/.gpt/agents")
+CONFIG_DIR = os.getenv('MARK_CONFIG_PATH', os.path.expanduser("~/.mark"))
+AGENTS_DIR = f"/{CONFIG_DIR}/agents"
 DEFAULT_AGENT = f"{AGENTS_DIR}/default.yaml"
 
 if not os.path.exists(AGENTS_DIR):

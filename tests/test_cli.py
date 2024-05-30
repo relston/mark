@@ -69,3 +69,4 @@ def test_command_default(create_file, mock_llm_response):
         """
     )
     assert new_markdown_file_content == expected_markdown_file_content
+    
