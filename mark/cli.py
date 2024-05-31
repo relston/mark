@@ -1,11 +1,11 @@
 import click
 from mark import (
-    agents,
     llm,
     llm_request,
     writer
 ) 
 from mark.markdown_file import MarkdownFile
+from mark.config import Config
 
 @click.command()
 @click.argument('input', type=click.File("r"))
@@ -14,7 +14,7 @@ def command(input, agent):
     """
     Command line tool that processes an input file with a specified agent to generate and record a response.
     """
-    selected_agent = agents.list.get(agent, 'default')
+    selected_agent = Config().agents().get(agent, 'default')
     markdown_file = MarkdownFile(input)
     request = llm_request.from_markdown_file(markdown_file)
     response = llm.get_completion(request, selected_agent)
