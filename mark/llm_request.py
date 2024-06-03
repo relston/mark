@@ -1,20 +1,38 @@
 import base64
 
 class LLMRequest:
-    def __init__(self, body, images):
+    def __init__(self):
         """
         Can serialize itself into a payload that can be sent to the OpenAI API (potentially others in the future)
         """
-        self.body = body
-        self.images = images
+        self.system_message = None
+        self.prompt = None
+        self.images = []
+
+    def with_system_message(self, system_message):
+        self.system_message = system_message
+        return self
+
+    def with_prompt(self, prompt):
+        self.prompt = prompt
+        return self
+    
+    def with_image(self, image):
+        self.images.append(Image(image))
+        return self
 
     def to_payload(self):
+        system_message = {"role": "system", "content": self.system_message}
+        
         if self.images:
-            content_segments = [{ 'type': 'text', 'text': self.body }]
+            user_content = [{ 'type': 'text', 'text': self.prompt }]
             for image in self.images:
-                content_segments.append({ 'type': 'image_url', 'image_url': { 'url': image.url } }) if image.url else None
-            return content_segments
-        return self.body
+                user_content.append({ 'type': 'image_url', 'image_url': { 'url': image.url } }) if image.url else None
+        else:
+            user_content = self.prompt
+
+        user_message = {"role": "user", "content": user_content}
+        return [system_message, user_message]
 
 
 class Image:
@@ -35,11 +53,3 @@ class Image:
         with open(self._path, "rb") as image_file:
             encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
             return encoded_image
-
-def from_markdown_file(markdown_file):
-    images = []
-    for image_info in markdown_file.images:
-        image = Image(image_info['image_path'])
-        images.append(image)
-
-    return LLMRequest(markdown_file.content, images)

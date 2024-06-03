@@ -10,11 +10,8 @@ def get_completion(llm_request, selected_agent):
     """
     Get completion from the OpenAI model for the given prompt and agent.
     """
-    system_message = {"role": "system", "content": selected_agent['system']}
-    user_message = {"role": "user", "content": llm_request.to_payload()}
-    messages = [system_message, user_message]
 
-    return _call_model(messages, MODEL)
+    return _call_model(llm_request.to_payload(), MODEL)
     
 def _call_model(messages, model):
     chat_completion = client.chat.completions.create(
