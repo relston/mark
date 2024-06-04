@@ -70,9 +70,9 @@ class TestCLI:
             {'role': 'system', 'content': expected_system_message}, 
             {'role': 'user', 'content': [
                     {'type': 'text', 'text': self.mock_markdown_file_content}, 
-                    {'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,c2FtcGxlIGltYWdlIGRhdGE='}}, 
+                    {'type': 'image_url', 'image_url': {'url': 'data:image/png;base64,c2FtcGxlIGltYWdlIGRhdGE='}}, 
                     {'type': 'image_url', 'image_url': {'url': 'https://example.com/image.png'}}, 
-                    {'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,b3V0c2lkZSBpbWFnZSBkYXRh'}}
+                    {'type': 'image_url', 'image_url': {'url': 'data:image/png;base64,b3V0c2lkZSBpbWFnZSBkYXRh'}},
                 ]
             }
         ]
@@ -116,9 +116,9 @@ class TestCLI:
             {'role': 'system', 'content': expected_system_message}, 
             {'role': 'user', 'content': [
                     {'type': 'text', 'text': self.mock_markdown_file_content}, 
-                    {'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,c2FtcGxlIGltYWdlIGRhdGE='}}, 
+                    {'type': 'image_url', 'image_url': {'url': 'data:image/png;base64,c2FtcGxlIGltYWdlIGRhdGE='}}, 
                     {'type': 'image_url', 'image_url': {'url': 'https://example.com/image.png'}}, 
-                    {'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,b3V0c2lkZSBpbWFnZSBkYXRh'}}
+                    {'type': 'image_url', 'image_url': {'url': 'data:image/png;base64,b3V0c2lkZSBpbWFnZSBkYXRh'}},
                 ]
             }
         ]
