@@ -1,8 +1,13 @@
 import os
+import click
 from openai import OpenAI
 
 OPEN_AI_API_KEY = os.getenv('OPENAI_API_KEY')
 MODEL = "gpt-4o-2024-05-13"
+
+if not OPEN_AI_API_KEY:
+    click.echo("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
+    exit(1)
 
 client = OpenAI(api_key=OPEN_AI_API_KEY)
 
