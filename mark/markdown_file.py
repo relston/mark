@@ -15,9 +15,13 @@ class MarkdownFile:
         """
         Initializes the MarkdownFile object with a TextIOWrapper, usually obtained from opening a file.
         """
-        self.file = file_wrapper
-        self.file_path = file_wrapper.name if file_wrapper.name != '<stdin>' else None
-        self.file_dir = os.path.dirname(self.file_path)
+        self.file_path = None
+        self.file_dir = None
+        if hasattr(file_wrapper, 'name') and file_wrapper.name != '<stdin>':
+            self.file_path = file_wrapper.name
+            self.file_dir = os.path.dirname(file_wrapper.name)
+        else:
+            self.file_dir = os.getcwd()
         self.file_content = file_wrapper.read()
         self._images = None
         self._links = None
@@ -49,6 +53,11 @@ class MarkdownFile:
                     .with_text(text)
             for text, src in matches    
         ]
+    
+    # def _resolve_file_dir(self, file_wrapper):
+    #     if hasattr(file_wrapper, 'name'):
+    #         return os.path.dirname(file_wrapper.name) if file_wrapper.name != '<stdin>' else None
+    #     return os.getcwd()
 
 class PageReference:
     @classmethod

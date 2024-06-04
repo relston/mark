@@ -2,6 +2,9 @@ from mark.cli import command
 from textwrap import dedent
 import pytest
 import os
+import sys
+import io
+from unittest.mock import patch
 
 """
 These tests are meant to act as 'functional-lite'. Maximizing code coverage for 
@@ -53,13 +56,7 @@ class TestCLI:
         # and llm returning this response
         mock_llm_response.return_value = "Test completion"
 
-    def test_command_default(self, mock_llm_response):
-        """Test CLI command without specifying an agent (default agent should be used)."""
-
-        # Run the CLI command with only the markdown file
-        command([str(self.markdown_file)], None, None, False)
-
-        expected_system_message = dedent(
+        self.default_expected_system_message = dedent(
             """
             Link Text: External URL
             SRC: https://example.com/some-article
@@ -76,9 +73,8 @@ class TestCLI:
             You are a helpful LLM agent that always returns your response in Markdown format."""
         )
         
-        # The llm will be called with the following request
-        expected_llm_request = [
-            {'role': 'system', 'content': expected_system_message}, 
+        self.default_expected_llm_request = [
+            {'role': 'system', 'content': self.default_expected_system_message}, 
             {'role': 'user', 'content': [
                     {'type': 'text', 'text': self.mock_markdown_file_content}, 
                     {'type': 'image_url', 'image_url': {'url': 'data:image/png;base64,c2FtcGxlIGltYWdlIGRhdGE='}}, 
@@ -87,7 +83,14 @@ class TestCLI:
                 ]
             }
         ]
-        mock_llm_response.assert_called_once_with(expected_llm_request, 'gpt-4o-2024-05-13')
+
+    def test_command_default(self, mock_llm_response):
+        """Test CLI command without specifying an agent (default agent should be used)."""
+
+        # Run the CLI command with only the markdown file
+        command([str(self.markdown_file)], None, None, False)
+
+        mock_llm_response.assert_called_once_with(self.default_expected_llm_request, 'gpt-4o-2024-05-13')
         
         # The markdown file will be updated with the response
         expected_markdown_file_content = self.mock_markdown_file_content + dedent(
@@ -99,7 +102,17 @@ class TestCLI:
             """
         )
         assert self.markdown_file.read_text() == expected_markdown_file_content
+
+    def test_command_with_stdin(self, mock_llm_response, mock_stdout):
+        byte_string = self.mock_markdown_file_content.encode('utf-8')
+        input = io.TextIOWrapper(io.BytesIO(byte_string), encoding='utf-8')
+        sys.stdin = input
         
+        command(['-'], None, None, False)
+
+        mock_llm_response.assert_called_once_with(self.default_expected_llm_request, 'gpt-4o-2024-05-13')
+        mock_stdout.assert_called_once_with("Test completion")
+
     def test_command_custom_agent(self, create_file, mock_llm_response):
         # Define a custom agent
         create_file(

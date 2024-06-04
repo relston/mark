@@ -5,12 +5,14 @@ from mark.markdown_file import MarkdownFile
 from mark.config import Config
 
 @click.command()
-@click.argument('input', type=click.File("r"))
+@click.argument('input', type=click.File())
 @click.option('--agent', type=click.STRING, default='default')
 def command(input, agent):
     """
     Command line tool that processes an input file with a specified agent to generate and record a response.
     """
+
+    # from IPython import embed; embed()
     selected_agent = Config().agents().get(agent, 'default')
     markdown_file = MarkdownFile(input)
     request = LLMRequest() \

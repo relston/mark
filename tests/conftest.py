@@ -3,6 +3,17 @@ import os
 from unittest.mock import patch
 from langchain_core.documents import Document
 
+@pytest.fixture(autouse=True)
+def mock_cwd(tmp_path):
+    with patch('os.getcwd') as mock:
+        mock.return_value = tmp_path
+        yield mock
+
+@pytest.fixture
+def mock_stdout():
+    with patch('click.echo') as mock:
+        yield mock
+
 @pytest.fixture
 def mock_llm_response():
     with patch('mark.llm._call_model') as mock:
