@@ -2,6 +2,7 @@ import os
 import re
 from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.utils.image import image_to_data_url
+from langchain_core.documents import Document
 from io import TextIOWrapper
 from textwrap import dedent
 
@@ -31,101 +32,107 @@ class MarkdownFile:
     @property
     def images(self):
         if not self._images:
-            self._images = self._parse_images()
+            self._images = self._parse_elements(Image)
         return self._images
         
     @property
     def links(self):
         if not self._links:
-            self._links = self._parse_links()
+            self._links = self._parse_elements(Link)
         return self._links
+    
+    def _parse_elements(self, cls):
+        matches = re.findall(cls.REGX_PATTERN, self.file_content)
+        return [
+            cls.from_reference_folder(self.file_dir) \
+                    .with_src(src) \
+                    .with_text(text)
+            for text, src in matches    
+        ]
 
-    def _parse_images(self):
-        """
-        Parses the markdown file to find all images (local and remote),
-        capturing their alt text, source path/URL, and resolving relative paths.
-        Returns a list of dictionaries with keys 'alt', 'src', and 'resolved_path'.
-        """
-        images_info = []
+class PageReference:
+    @classmethod
+    def from_reference_folder(cls, folder):
+        return cls(folder)
 
-        # Find all matches of the pattern in the line
-        matches = re.findall(Image.REGX_PATTERN, self.file_content)
-        # For each match, create a dictionary with alt, src, and resolved path keys
-        for alt_text, src in matches:
-            if src.startswith("http"):
-                images_info.append(Image(src, src, alt_text))
-            else:
-                resolved_path = os.path.normpath(os.path.join(self.file_dir, src))
-                images_info.append(Image(src, resolved_path, alt_text))
+    def __init__(self, reference_folder, src=None):
+        self.reference_folder = reference_folder
+        self.src = src
+        self.uri = None
+        if src:
+            self._resolve_uri()
 
-        return images_info
+    def with_src(self, src):
+        self.src = src
+        self._resolve_uri()
+        return self
+    
+    def with_text(self, text):
+        self.link_text = text
+        return self
+    
+    def is_web_reference(self):
+        return self.src.startswith("http")
+    
+    def _resolve_uri(self):
+        if self.is_web_reference():
+            self.uri = self.src
+        else:
+            self.uri = os.path.normpath(os.path.join(self.reference_folder, self.src))
 
-    def _parse_links(self):
-        """
-        Parses the markdown file to find all links, capturing their text and URL.
-        Returns a list of dictionaries with keys 'text' and 'url'.
-        """
-        links_info = []
-
-        # Find all matches of the pattern in the document
-        matches = re.findall(Link.REGX_PATTERN, self.file_content)
-        # For each match, create a dictionary with text and URL keys
-        for text, src in matches:
-            if src.startswith("http"):
-                links_info.append(Link(src, text))
-            else:
-                resolved_path = os.path.normpath(os.path.join(self.file_dir, src))
-                links_info.append(Link(resolved_path, text))
-
-        return links_info    
-
-class Image:
+class Image(PageReference):
     # Regular expression to find Markdown image syntax with alt text
     REGX_PATTERN = r'!\[(.*?)\]\((.*?)\)'
 
-    def __init__(self, src, path, link_text=None):
-        self._path = path
-        self.src = src
-        self.url = None
-        self.link_text = link_text
-
-        if self._path.startswith("http"):
-            self.url = self._path
+    @property
+    def url(self):
+        if self.is_web_reference():
+            return self.uri
         else:
             try:
-                self.url = image_to_data_url(self._path)
+                return image_to_data_url(self.uri)
             except (FileNotFoundError, IsADirectoryError) as e:
                 print(f"Sorry, {e.filename} does not exist.")
         
-class Link:
+class Link(PageReference):
     # Regular expression to find Markdown link syntax
     # it will match `[text](url)` but not `![text](url)`
     REGX_PATTERN = r'(?<!\!)\[([^\]]+)\]\(([^)]+)\)'
 
-    def __init__(self, src, text):
-        self.text = text
-        self.src = src
+    def __init__(self, reference_folder, src=None):
+        super().__init__(reference_folder, src)
         self._document = None
-
+    
     def __str__(self):
-        serialized_web_document = dedent(f"""
-        Link Text: {self.text}
-        Title: {self.document.metadata['title']}
-        URL: {self.src}
+        serialized_document = dedent(f"""
+        Link Text: {self.link_text}
+        SRC: {self.src}
+        Page Title: {self.document.metadata['title']}
         Page Content:
         """)
-        serialized_web_document += self.document.page_content
-        return serialized_web_document
+        serialized_document += self.document.page_content + "\n"
+        return serialized_document
 
     @property
     def document(self):
         if not self._document:
-            self._document = self._request_page_content(self.src)    
-            self._document.metadata['link text'] = self.text
+            self._document = self._get_document(self.uri)    
+            self._document.metadata['link text'] = self.link_text
         return self._document
     
-    def _request_page_content(self, src):
-        web_document, *_ = WebBaseLoader(src).load()
+    def _get_document(self, uri):
+        if self.is_web_reference():
+            return self._request_page_content(uri)    
+        else:
+            try:
+                with open(uri, 'r') as file:
+                    file_content = file.read()
+                    file_document = Document(page_content=file_content, metadata={'title': os.path.basename(uri)})
+                    return file_document
+            except (FileNotFoundError, IsADirectoryError) as e:
+                print(f"Sorry, {e.filename} does not exist.")
+    
+    def _request_page_content(self, uri):
+        web_document, *_ = WebBaseLoader(uri).load()
         return web_document
         
-

@@ -36,14 +36,19 @@ class TestCLI:
 
         External url link:
         [External URL](https://example.com/some-article)
+                                                 
+        Local file link:
+        [Anther Reference](./docs/another-reference.md)
         """)
-
-        mock_web_page("https://example.com/some-article", "Example link title", "Content of the external url link")
 
         # and the files exists in the file system
         self.markdown_file = create_file("test.md", self.mock_markdown_file_content)
         create_file("./images/sample.png", b"sample image data", binary=True)
         create_file("../images/outside.png", b"outside image data", binary=True)
+        create_file("./docs/another-reference.md", "Another reference content")
+        
+        # and the external url link returns this response
+        mock_web_page("https://example.com/some-article", "Example link title", "Content of the external url link")
 
         # and llm returning this response
         mock_llm_response.return_value = "Test completion"
@@ -57,10 +62,16 @@ class TestCLI:
         expected_system_message = dedent(
             """
             Link Text: External URL
-            Title: Example link title
-            URL: https://example.com/some-article
+            SRC: https://example.com/some-article
+            Page Title: Example link title
             Page Content:
             Content of the external url link
+            ---
+            Link Text: Anther Reference
+            SRC: ./docs/another-reference.md
+            Page Title: another-reference.md
+            Page Content:
+            Another reference content
             
             You are a helpful LLM agent that always returns your response in Markdown format."""
         )
@@ -103,10 +114,16 @@ class TestCLI:
         expected_system_message = dedent(
             """
             Link Text: External URL
-            Title: Example link title
-            URL: https://example.com/some-article
+            SRC: https://example.com/some-article
+            Page Title: Example link title
             Page Content:
             Content of the external url link
+            ---
+            Link Text: Anther Reference
+            SRC: ./docs/another-reference.md
+            Page Title: another-reference.md
+            Page Content:
+            Another reference content
             
             You're a custom agent that ....."""
         )

@@ -27,18 +27,20 @@ class LLMRequest:
     def to_payload(self):
         system_content = ""
         
-        for link in self.links:
-            system_content += str(link)
+        if self.links:
+            link_content_block = "---".join([str(link) for link in self.links])
+            system_content += link_content_block
 
         if self.system_message:
-            system_content += "\n\n" + self.system_message
-            
+            system_content += "\n" + self.system_message
+
         system_message = {"role": "system", "content": system_content}
         
         if self.images:
             user_content = [{ 'type': 'text', 'text': self.prompt }]
             for image in self.images:
-                user_content.append({ 'type': 'image_url', 'image_url': { 'url': image.url } }) if image.url else None
+                if image.url:
+                    user_content.append({ 'type': 'image_url', 'image_url': { 'url': image.url } })
         else:
             user_content = self.prompt
 
