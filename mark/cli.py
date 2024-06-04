@@ -17,7 +17,8 @@ def command(input, agent):
                 .with_prompt(markdown_file.content) \
                 .with_system_message(selected_agent['system'])
     
-    [request.with_image(image) for image in markdown_file.images]  
+    [request.with_image(image) for image in markdown_file.images]
+    [request.with_link(link) for link in markdown_file.links]
     
     response = llm.get_completion(request, selected_agent)
 

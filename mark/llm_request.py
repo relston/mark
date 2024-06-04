@@ -6,6 +6,7 @@ class LLMRequest:
         self.system_message = None
         self.prompt = None
         self.images = []
+        self.links = []
 
     def with_system_message(self, system_message):
         self.system_message = system_message
@@ -18,9 +19,21 @@ class LLMRequest:
     def with_image(self, image):
         self.images.append(image)
         return self
+    
+    def with_link(self, document):
+        self.links.append(document)
+        return self
 
     def to_payload(self):
-        system_message = {"role": "system", "content": self.system_message}
+        system_content = ""
+        
+        for link in self.links:
+            system_content += str(link)
+
+        if self.system_message:
+            system_content += "\n\n" + self.system_message
+            
+        system_message = {"role": "system", "content": system_content}
         
         if self.images:
             user_content = [{ 'type': 'text', 'text': self.prompt }]

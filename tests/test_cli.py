@@ -20,7 +20,7 @@ class TestCLI:
         os.environ['MARK_CONFIG_PATH'] = str(self.config_path)
 
     @pytest.fixture(autouse=True)
-    def define_files(self, create_file, mock_llm_response):
+    def define_files(self, create_file, mock_llm_response, mock_web_page):
         # Given a markdown file with the following content
         self.mock_markdown_file_content = dedent("""
         A Markdown file with various images and links
@@ -35,14 +35,10 @@ class TestCLI:
         ![Outside Image](../images/outside.png)
 
         External url link:
-        [External URL](https://example.com)
-
-        Local link:
-        [Local Link](./local.md)
-
-        Relative link outside directory:
-        [Outside Link](../outside.md)
+        [External URL](https://example.com/some-article)
         """)
+
+        mock_web_page("https://example.com/some-article", "Example link title", "Content of the external url link")
 
         # and the files exists in the file system
         self.markdown_file = create_file("test.md", self.mock_markdown_file_content)
@@ -57,10 +53,21 @@ class TestCLI:
 
         # Run the CLI command with only the markdown file
         command([str(self.markdown_file)], None, None, False)
+
+        expected_system_message = dedent(
+            """
+            Link Text: External URL
+            Title: Example link title
+            URL: https://example.com/some-article
+            Page Content:
+            Content of the external url link
+            
+            You are a helpful LLM agent that always returns your response in Markdown format."""
+        )
         
         # The llm will be called with the following request
         expected_llm_request = [
-            {'role': 'system', 'content': 'You are a helpful LLM agent that always returns your response in Markdown format.'}, 
+            {'role': 'system', 'content': expected_system_message}, 
             {'role': 'user', 'content': [
                     {'type': 'text', 'text': self.mock_markdown_file_content}, 
                     {'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,c2FtcGxlIGltYWdlIGRhdGE='}}, 
@@ -93,9 +100,20 @@ class TestCLI:
         # Run the CLI command with the custom agent
         command([str(self.markdown_file), '--agent=custom'], None, None, False)
 
+        expected_system_message = dedent(
+            """
+            Link Text: External URL
+            Title: Example link title
+            URL: https://example.com/some-article
+            Page Content:
+            Content of the external url link
+            
+            You're a custom agent that ....."""
+        )
+
         # The llm will be called with the following request
         expected_llm_request = [
-            {'role': 'system', 'content': "You're a custom agent that ....."}, 
+            {'role': 'system', 'content': expected_system_message}, 
             {'role': 'user', 'content': [
                     {'type': 'text', 'text': self.mock_markdown_file_content}, 
                     {'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,c2FtcGxlIGltYWdlIGRhdGE='}}, 

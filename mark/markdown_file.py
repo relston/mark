@@ -1,7 +1,9 @@
-from io import TextIOWrapper
 import base64
 import os
 import re
+from langchain_community.document_loaders import WebBaseLoader
+from io import TextIOWrapper
+from textwrap import dedent
 
 """
 MarkdownFile
@@ -17,6 +19,7 @@ class MarkdownFile:
         self.file_dir = os.path.dirname(self.file_path)
         self.file_content = file_wrapper.read()
         self._images = None
+        self._links = None
         
     @property
     def content(self):
@@ -57,6 +60,11 @@ class MarkdownFile:
     
     @property
     def links(self):
+        if not self._links:
+            self._links = self._parse_links()
+        return self._links
+
+    def _parse_links(self):
         """
         Parses the markdown file to find all links, capturing their text and URL.
         Returns a list of dictionaries with keys 'text' and 'url'.
@@ -71,10 +79,10 @@ class MarkdownFile:
         # For each match, create a dictionary with text and URL keys
         for text, url in matches:
             if url.startswith("http"):
-                links_info.append({'text': text, 'url': url})
+                links_info.append(Link(text, url))
             else:
                 resolved_path = os.path.normpath(os.path.join(self.file_dir, url))
-                links_info.append({'text': text, 'url': resolved_path})
+                links_info.append(Link(text, resolved_path))
 
         return links_info
 
@@ -98,3 +106,32 @@ class Image:
         with open(self._path, "rb") as image_file:
             encoded_image = base64.b64encode(image_file.read()).decode("utf-8")
             return encoded_image
+        
+class Link:
+    def __init__(self, text, url):
+        self.text = text
+        self.url = url
+        self._document = None
+
+    def __str__(self):
+        serialized_web_document = dedent(f"""
+        Link Text: {self.text}
+        Title: {self.document.metadata['title']}
+        URL: {self.url}
+        Page Content:
+        """)
+        serialized_web_document += self.document.page_content
+        return serialized_web_document
+
+    @property
+    def document(self):
+        if not self._document:
+            self._document = self._request_page_content(self.url)    
+            self._document.metadata['link text'] = self.text
+        return self._document
+    
+    def _request_page_content(self, url):
+        web_document, *_ = WebBaseLoader(url).load()
+        return web_document
+        
+

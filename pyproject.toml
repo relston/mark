@@ -12,6 +12,8 @@ openai = "1.14.2"
 click = "^8.1.7"
 beautifulsoup4 = "^4.12.3"
 markdown = "^3.6"
+langchain = "^0.2.1"
+langchain-community = "^0.2.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
