@@ -1,6 +1,5 @@
 import os
 import re
-from langchain_community.document_loaders import WebBaseLoader
 from langchain_core.utils.image import image_to_data_url
 from langchain_core.documents import Document
 from io import TextIOWrapper
@@ -142,6 +141,9 @@ class Link(PageReference):
                 print(f"Sorry, {e.filename} does not exist.")
     
     def _request_page_content(self, uri):
+        # Only used if the link is a web reference
+        from langchain_community.document_loaders import WebBaseLoader
+
         web_document, *_ = WebBaseLoader(uri).load()
         return web_document
         

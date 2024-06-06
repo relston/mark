@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "mark"
-version = "0.3.5"
+version = "0.3.6"
 description = ""
 authors = ["Ryan Elston <elston.ryan@gmail.com>"]
 
