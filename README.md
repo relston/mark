@@ -1,6 +1,10 @@
 # Mark
 A CLI tool for interacting with LLMs using markdown files. Image references are submitted to GPT4o for visual recognition and links (local and external) are scrapped and provided as context to the LLM. The response is appended back to the markdown file (by default)
 
+```bash
+mark path/to/markdown.md
+```
+
 ```markdown
 Describe ![this image](https://www.animal.photos/mamm1/cat-tig1_files/bengal12.jpg) to me in one short sentance.
 
@@ -25,22 +29,31 @@ List each section of content on [this page](https://en.wikipedia.org/wiki/Bengal
     ...
 ```
 
-This allows you to carry on a conversation directly in the markdown file - or simply integrate the response back into the document you're working on. This is a powerful, flexible and natural way to interact with LLMs that unlocks countless use cases. 
+This allows you to carry on a conversation directly in the markdown file - or simply integrate the response back into the document you're working on. This is a powerful, flexible and natural way to interact with LLMs that unlocks countless use cases. `mark`'s focus on explicitly using Markdown as both a prompt and response medium for LLMs presents a unique approach. By blending interactive, version-controlled Markdown documents with LLM responses in a CLI tool offers an innovative workflow for those looking to integrate LLM interactions into their development and documentation processes.
+
+# Install the Mark CLI
+```bash
+pipx install git+https://github.com/relston/mark.git
+```
+- *[Requires pipx](https://pipx.pypa.io/stable/installation/)*
+
+Updating the CLI:
+```bash
+pipx upgrade mark
+```
+
+# Usage
+By default, `mark` will read a markdown file, extract any context references, and send them to the LLM. The responses are then appended to the markdown file.
+```bash
+mark path/to/markdown.md
+```
+*Requires an OpenAI API key in the `OPENAI_API_KEY` environment variable*
 
 Also supports stdin and stdout for piping
 ```bash
 cat path/to/markdown.md | mark 
 # LLM response....
 ```
-
-`mark`'s focus on explicitly using Markdown as both a prompt and response medium for LLMs presents a unique approach. By blending interactive, version-controlled Markdown documents with LLM responses in a CLI tool offers an innovative workflow for those looking to integrate LLM interactions into their development and documentation processes.
-
-# Install CLI Tool
-```bash
-pipx install git+https://github.com/relston/mark.git
-```
-*[Requires pipx](https://pipx.pypa.io/stable/installation/)*
-
 
 # Development
 ## Local Setup
