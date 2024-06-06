@@ -1,27 +1,30 @@
 import os
-import yaml
+from importlib.resources import read_text
 
 # Initialize and setup
 class Config:
+    DEFAULT_SYSTEM_PROMPT_TEMPLATE_PATH = 'templates/default_system_prompt.md'
+
     def __init__(self):
         self.config_dir = os.getenv('MARK_CONFIG_PATH', os.path.expanduser("~/.mark"))
-        self.agents_dir = f"/{self.config_dir}/agents"
-        self.default_agent = f"{self.agents_dir}/default.yaml"
+        self.system_prompts_dir = f"/{self.config_dir}/system_prompts"
+        self.default_system_prompt = f"{self.system_prompts_dir}/default.md"
         
-        if not os.path.exists(self.agents_dir):
-            os.makedirs(self.agents_dir)
+        if not os.path.exists(self.system_prompts_dir):
+            os.makedirs(self.system_prompts_dir)
 
-        if not os.path.exists(self.default_agent):
-            with open(os.path.expanduser( self.default_agent), "w") as file:
-                file.write("""system: >
-            You are a helpful LLM agent that always returns your response in Markdown format.""")
+        if not os.path.exists(self.default_system_prompt):
+            default_config = read_text('templates', 'default_system_prompt.md')
+            
+            with open(os.path.expanduser(self.default_system_prompt), "w") as file:
+                file.write(default_config)
 
-    def agents(self):
-        agents = {}
-        for filename in os.listdir(self.agents_dir):
-            filepath = os.path.join(self.agents_dir, filename)
+    def system_prompts(self):
+        system_prompts = {}
+        for filename in os.listdir(self.system_prompts_dir):
+            filepath = os.path.join(self.system_prompts_dir, filename)
             with open(filepath, "r") as file:
-                agent_name = os.path.splitext(filename)[0]
-                agents[agent_name] = yaml.safe_load(file)
-        return agents
+                system_prompt_name = os.path.splitext(filename)[0]
+                system_prompts[system_prompt_name] = file.read()
+        return system_prompts
 

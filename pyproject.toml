@@ -1,8 +1,13 @@
 [tool.poetry]
 name = "mark"
-version = "0.3.4"
+version = "0.3.5"
 description = ""
 authors = ["Ryan Elston <elston.ryan@gmail.com>"]
+
+# Include additional files
+include = [
+    "templates/default_system_prompt.md"
+]
 
 [tool.poetry.dependencies]
 python = "^3.10"

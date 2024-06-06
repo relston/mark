@@ -1,10 +1,10 @@
 from mark import llm
 
 RESPONSE_TEMPLATE = """
-**GPT Response (model: {model}, agent: {agent})**
+# GPT Response (model: {model}, system: {agent})
 {message}
 
-**User Response**
+# User Response
 """
 
 def write_response(file_name, message, agent='default', model=llm.MODEL):

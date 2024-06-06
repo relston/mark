@@ -56,6 +56,18 @@ class TestCLI:
         # and llm returning this response
         mock_llm_response.return_value = "Test completion"
 
+        self.default_system_prompt = dedent(
+            """
+            You are a helpful LLM agent that will receive user input in the form of a markdown file. 
+            The contents of the file will be used as context and the specific prompt from the use will be located at the end of the file. 
+            Your response to the users request should also be written in markdown format.
+            
+            RULES:
+            - Do not echo back any of the input into your response to the user.
+            - If using a heading in your response, start with a level 2 heading
+            """
+        )
+
         self.default_expected_system_message = dedent(
             """
             Link Text: External URL
@@ -69,9 +81,8 @@ class TestCLI:
             Page Title: another-reference.md
             Page Content:
             Another reference content
-            
-            You are a helpful LLM agent that always returns your response in Markdown format."""
-        )
+            """
+        ) + self.default_system_prompt
         
         self.default_expected_llm_request = [
             {'role': 'system', 'content': self.default_expected_system_message}, 
@@ -95,12 +106,13 @@ class TestCLI:
         # The markdown file will be updated with the response
         expected_markdown_file_content = self.mock_markdown_file_content + dedent(
             """
-            **GPT Response (model: gpt-4o-2024-05-13, agent: default)**
+            # GPT Response (model: gpt-4o-2024-05-13, system: default)
             Test completion
 
-            **User Response**
+            # User Response
             """
         )
+
         assert self.markdown_file.read_text() == expected_markdown_file_content
 
     def test_command_with_stdin(self, mock_llm_response, mock_stdout):
@@ -116,13 +128,12 @@ class TestCLI:
     def test_command_custom_agent(self, create_file, mock_llm_response):
         # Define a custom agent
         create_file(
-            self.config_path / 'agents/custom.yaml', 
-            """system: >
-                You're a custom agent that ....."""
+            self.config_path / 'system_prompts/custom.md', 
+            """You're a custom agent that ....."""
         )
 
         # Run the CLI command with the custom agent
-        command([str(self.markdown_file), '--agent=custom'], None, None, False)
+        command([str(self.markdown_file), '--system=custom'], None, None, False)
 
         expected_system_message = dedent(
             """
@@ -157,10 +168,10 @@ class TestCLI:
         # The markdown file will be updated indicating the custom agent
         expected_markdown_file_content = self.mock_markdown_file_content + dedent(
             """
-            **GPT Response (model: gpt-4o-2024-05-13, agent: custom)**
+            # GPT Response (model: gpt-4o-2024-05-13, system: custom)
             Test completion
 
-            **User Response**
+            # User Response
             """
         )
         assert self.markdown_file.read_text() == expected_markdown_file_content
