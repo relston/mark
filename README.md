@@ -1,5 +1,7 @@
 # Mark
-**Mark lets you seamlessly use markdown, images and links to interact with GPT**
+**Mark lets you seamlessly use markdown, images and links to interact with GPT4o**
+
+Why Markdown + GPT? For a full rundown of the benefits and use cases, check out [Introducing 'Mark', a Markdown CLI tool for GPT4o](https://relston.github.io/markdown/gpt4o/cli/2024/06/07/introducing-mark.html)
 
 ## Key Features
 - Interact with LLMs using Markdown
@@ -82,30 +84,3 @@ poetry run mark path/to/markdown.md
 ```bash
 poetry run python -m pytest
 ```
-
-# Why Markdown + LLMs?
-Markdown provides a powerful, flexible, and efficient medium to interact with LLMs. It's simplicity, combined with the richness of its features and compatibility with modern development tools, makes it uniquely suitable for optimizing the effectiveness of LLM interactions.
-
-- **Semantic Structuring**:
-    - Markdown's semantic elements like headers, blockquotes, and emphasis can help structure prompts in a way that guides the LLM through the task, emphasizing key parts and delineating sections logically. This can lead to more accurate understanding and processing by the LLM.
-    - Also the simple formatting notation allows one to easily create prompts with structure that communicates a lot to the LLM while minimizing the input token count
-    - Markdown allows you to insert code blocks seamlessly within text. This is incredibly useful for creating and sharing code snippets or requests for code generation, maintenance, or documentation. The LLM can analyze the code context provided with the prose to give better responses.
-
-- **Explicit Relevant Context**:
-    - Most RAG systems rely on embedding models to guess which context is relevant to the prompt based on semantic search from a prepared database of content. By using markdown files, the context of the link references is explicit and can be easily manipulated on the fly to provide the most relevant context documents to the LLM.
-
-- **Visual Context**:
-    - Images referenced in Markdown files is a natural way to provide visual context to the LLM.
-
-- **Extensibility & Custom Syntax**:
-    - Markdown can be extended with custom syntax, allowing for the inclusion of specialized elements such as task lists, diagrams (e.g., Mermaid.js for flowcharts), and more. This can provide additional context and directives to LLMs trained to parse such custom syntax.    
-    - llms can provide responses structured as tables and lists, which are easily rendered in markdown
-
-- **Collaboration & Versioning**:
-    - Markdown's compatibility with version control systems like Git allows for efficient collaboration, auditing, and version tracking.
-
-- **Integration with Other Tools**:
-    - Modern IDEs and text editors provide excellent support for Markdown, including syntax highlighting, preview panes, and dictation tools. This can enhance the authoring experience and make it easier to interact with LLMs.
-    - Markdown can be integrated with a variety of other tools and services, such as static site generators (e.g., Jekyll, Hugo), which can provide preview capabilities for iterating on LLM interactions.
-    - Markdown files can be easily converted to other formats (PDF, HTML, DOCX) using tools like Pandoc. This ensures that any work done in Markdown for interacting with LLMs can be repurposed in multiple venues.
-
