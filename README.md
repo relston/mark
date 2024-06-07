@@ -1,12 +1,16 @@
 # Mark
-A CLI tool for interacting with LLMs using markdown files. Image references are submitted to GPT4o for visual recognition and links (local and external) are scrapped and provided as context to the LLM. The response is appended back to the markdown file (by default)
+**Mark lets you seamlessly use markdown, images and links to interact with GPT**
 
-```bash
-mark path/to/markdown.md
-```
+## Key Features
+- Interact with LLMs using Markdown
+- Visual recognition of markdown image references via GPT4o
+- Local and remote links are scraped for context
+- GPT responses appended directly into Markdown files
+- `stdin` and `stdout` support for piping
 
+## Example
 ```markdown
-Describe ![this image](https://www.animal.photos/mamm1/cat-tig1_files/bengal12.jpg) to me in one short sentance.
+Describe ![this image](https://www.animal.photos/mamm1/cat-tig1_files/bengal12.jpg) to me in one short sentence.
 
 # GPT Response (model: gpt-4o-2024-05-13, system: default)
 A Bengal tiger is walking on a sandy path with greenery in the background.
@@ -49,10 +53,17 @@ mark path/to/markdown.md
 ```
 *Requires an OpenAI API key in the `OPENAI_API_KEY` environment variable*
 
-Also supports stdin and stdout for piping
+Also supports `stdin` with `stdout` for piping GPT responses into other tools
 ```bash
 cat path/to/markdown.md | mark 
 # LLM response....
+```
+
+## Custom system prompts
+The system prompts folder is located at `~/.mark/system_prompts` and it includes a `default.md` prompt. You can add any additional system prompts you'd like to use in this folder and use them with the `--system` flag.
+```bash
+# ~/.mark/system_prompts/custom.md
+mark path/to/markdown.md --system custom
 ```
 
 # Development
