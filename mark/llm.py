@@ -1,6 +1,7 @@
 import os
 import click
 from openai import OpenAI
+from mark.config import get_config
 
 OPEN_AI_API_KEY = os.getenv('OPENAI_API_KEY')
 MODEL = "gpt-4o-2024-05-13"
@@ -11,10 +12,12 @@ if not OPEN_AI_API_KEY:
 
 client = OpenAI(api_key=OPEN_AI_API_KEY)
 
-def get_completion(llm_request, selected_agent):
+def get_completion(llm_request):
     """
     Get completion from the OpenAI model for the given prompt and agent.
     """
+
+    get_config().log(llm_request.to_log())
 
     return _call_model(llm_request.to_payload(), MODEL)
     
