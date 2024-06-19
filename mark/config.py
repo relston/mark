@@ -48,6 +48,9 @@ class Config:
 _config = None
 
 def get_config():
+    """
+    TODO: This is causing tests/test_cli.py::TestCLI::test_command_custom_agent to fail because the config without custom is already created.
+    """
     global _config
     if not _config:
         _config = Config()

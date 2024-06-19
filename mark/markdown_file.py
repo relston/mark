@@ -143,7 +143,7 @@ class Link(PageReference):
     def _request_page_content(self, uri):
         # Only used if the link is a web reference
         from langchain_community.document_loaders import WebBaseLoader
-
+        
         web_document, *_ = WebBaseLoader(uri).load()
         return web_document
         

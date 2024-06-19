@@ -1,5 +1,5 @@
 import click
-from mark import llm, writer
+from mark import llm
 from mark.llm_request import LLMRequest
 from mark.markdown_file import MarkdownFile
 from mark.config import get_config
@@ -7,7 +7,8 @@ from mark.config import get_config
 @click.command()
 @click.argument('input', type=click.File())
 @click.option('--system', type=click.STRING, default='default')
-def command(input, system):
+@click.option('--generate-image', is_flag=True, default=False, help='EXPERIMENTAL: Generate an image using DALL-E.')
+def command(input, system, generate_image):
     """
     Command line tool that processes an input file with a specified agent to generate and record a response.
     """
@@ -20,9 +21,15 @@ def command(input, system):
     [request.with_image(image) for image in markdown_file.images]
     [request.with_link(link) for link in markdown_file.links]
     
-    response = llm.get_completion(request)
+    if generate_image:
+        response = llm.generate_image(request)
+    else:
+        response = llm.get_completion(request)
+    
+    response.with_system(system)
 
     if markdown_file.file_path:
-        writer.write_response(markdown_file.file_path, response, system)
+        with open(markdown_file.file_path, "a") as file:
+            file.write(response.to_markdown())
     else:
-        click.echo(response)
+        click.echo(response.content)

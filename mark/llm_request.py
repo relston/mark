@@ -51,6 +51,9 @@ class LLMRequest:
 
         user_message = {"role": "user", "content": user_content}
         return [system_message, user_message]
+    
+    def to_flat_prompt(self):
+        return self.system_content() + "\n" + self.prompt
 
     def to_log(self):
         return dedent("""
