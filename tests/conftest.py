@@ -16,7 +16,12 @@ def mock_stdout():
 
 @pytest.fixture
 def mock_llm_response():
-    with patch('mark.llm._call_model') as mock:
+    with patch('mark.llm._call_completion') as mock:
+        yield mock
+
+@pytest.fixture
+def mock_image_generation():
+    with patch('mark.llm._call_generate_image') as mock:
         yield mock
 
 @pytest.fixture

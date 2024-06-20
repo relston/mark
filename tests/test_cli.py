@@ -5,7 +5,7 @@ import pytest
 import os
 import sys
 import io
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 """
 These tests are meant to act as 'functional-lite'. Maximizing code coverage for 
@@ -24,7 +24,9 @@ class TestCLI:
         os.environ['MARK_CONFIG_PATH'] = str(self.config_path)
 
     @pytest.fixture(autouse=True)
-    def define_files(self, create_file, mock_llm_response, mock_web_page):
+    def define_files(self, create_file, mock_llm_response, mock_web_page, mock_image_generation):
+        config.reset()
+
         # Given a markdown file with the following content
         self.mock_markdown_file_content = dedent("""
         A Markdown file with various images and links
@@ -56,6 +58,10 @@ class TestCLI:
 
         # and llm returning this response
         mock_llm_response.return_value = "Test completion"
+        mock_image_generation.return_value = Mock(
+            url='https://generated.image.url/image.png', 
+            revised_prompt='A revised mock image prompt'
+        )
 
         self.default_system_prompt = dedent(
             """
@@ -127,8 +133,6 @@ class TestCLI:
         mock_stdout.assert_called_once_with("Test completion")
 
     def test_command_custom_agent(self, create_file, mock_llm_response):
-        config.reset()
-        
         # Define a custom agent
         create_file(
             self.config_path / 'system_prompts/custom.md', 
@@ -177,4 +181,28 @@ class TestCLI:
             # User Response
             """
         )
+        assert self.markdown_file.read_text() == expected_markdown_file_content
+
+    def test_command_generate_image(self, mock_image_generation):
+        """
+        Test CLI command with the --generate-image option.
+        """
+        
+        command([str(self.markdown_file), '--generate-image'], None, None, False)
+
+        expected_prompt = self.default_expected_system_message + "\n" + self.mock_markdown_file_content
+        mock_image_generation.assert_called_once_with(expected_prompt, "dall-e-3")
+        
+        # The markdown file will be updated with the generated image URL
+        expected_markdown_file_content = self.mock_markdown_file_content + dedent(
+            """
+            # GPT Response (model: dall-e-3, system: default)
+            A revised mock image prompt
+
+            ![Generated Image](https://generated.image.url/image.png)
+
+            # User Response
+            """
+        )
+
         assert self.markdown_file.read_text() == expected_markdown_file_content

@@ -47,30 +47,32 @@ def get_completion(llm_request):
     """
     Get completion from the OpenAI model for the given prompt and agent.
     """
-
     get_config().log(llm_request.to_log())
 
-    response_text = _call_model(llm_request.to_payload(), MODEL)
+    response_text = _call_completion(llm_request.to_payload(), MODEL)
     
     return LLMResponse(response_text, MODEL)
 
-@handle_openai_errors
 def generate_image(llm_request):
     get_config().log(llm_request.to_log())
-    
+
+    response =  _call_generate_image(llm_request.to_flat_prompt(), DALL_E_MODEL)
+
+    return LLMImageResponse(response.url, DALL_E_MODEL, response.revised_prompt)
+
+@handle_openai_errors
+def _call_generate_image(prompt, model):
     response = client.images.generate(
-        prompt=llm_request.to_flat_prompt(),
-        model=DALL_E_MODEL,
+        prompt=prompt,
+        model=model,
         size="1024x1024",
         n=1
     )
 
-    revised_prompt = response.data[0].revised_prompt
-    image_url = response.data[0].url
-    return LLMImageResponse(image_url, DALL_E_MODEL, revised_prompt)
+    return response.data[0]
 
 @handle_openai_errors
-def _call_model(messages, model):
+def _call_completion(messages, model):
     chat_completion = client.chat.completions.create(
         messages=messages,
         model=model,
