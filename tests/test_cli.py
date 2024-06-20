@@ -1,5 +1,6 @@
 from mark.cli import command
 from textwrap import dedent
+from mark import config
 import pytest
 import os
 import sys
@@ -126,6 +127,8 @@ class TestCLI:
         mock_stdout.assert_called_once_with("Test completion")
 
     def test_command_custom_agent(self, create_file, mock_llm_response):
+        config.reset()
+        
         # Define a custom agent
         create_file(
             self.config_path / 'system_prompts/custom.md', 
