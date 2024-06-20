@@ -1,18 +1,23 @@
 import os
 import click
-from openai import OpenAI
+import openai
 from mark.config import get_config
 from mark.llm_response import LLMResponse, LLMImageResponse
 
-OPEN_AI_API_KEY = os.getenv('OPENAI_API_KEY')
 MODEL = "gpt-4o-2024-05-13"
 DALL_E_MODEL = "dall-e-3"
 
-if not OPEN_AI_API_KEY:
+# TODO: Move this config logic to the config class
+OPENAI_BASE_URL  = os.getenv('OPENAI_API_BASE_URL', openai.base_url )
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+if not OPENAI_API_KEY:
     click.echo("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
     exit(1)
 
-client = OpenAI(api_key=OPEN_AI_API_KEY)
+client = openai.OpenAI(
+    api_key=OPENAI_API_KEY,
+    base_url=OPENAI_BASE_URL
+)
 
 def get_completion(llm_request):
     """
