@@ -19,6 +19,30 @@ client = openai.OpenAI(
     base_url=OPENAI_BASE_URL
 )
 
+def handle_openai_errors(func):
+    def error_handler(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except openai.APIConnectionError as e:
+            click.echo(f"{OPENAI_BASE_URL} could not be reached")
+            click.echo(e.__cause__)
+            exit(1)
+        except openai.RateLimitError as e:
+            click.echo("RateLimitError was received; we should back off a bit.")
+            exit(1)
+        except openai.BadRequestError as e:
+            click.echo("BadRequestError was received")
+            click.echo(e.message)
+            exit(1)
+        except openai.APIStatusError as e:
+            click.echo("Another non-200-range status code was received")
+            click.echo(e.status_code)
+            click.echo(e.response)
+            exit(1)
+
+    return error_handler
+
+
 def get_completion(llm_request):
     """
     Get completion from the OpenAI model for the given prompt and agent.
@@ -30,6 +54,7 @@ def get_completion(llm_request):
     
     return LLMResponse(response_text, MODEL)
 
+@handle_openai_errors
 def generate_image(llm_request):
     get_config().log(llm_request.to_log())
     
@@ -43,7 +68,8 @@ def generate_image(llm_request):
     revised_prompt = response.data[0].revised_prompt
     image_url = response.data[0].url
     return LLMImageResponse(image_url, DALL_E_MODEL, revised_prompt)
-    
+
+@handle_openai_errors
 def _call_model(messages, model):
     chat_completion = client.chat.completions.create(
         messages=messages,
