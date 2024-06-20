@@ -39,8 +39,6 @@ def generate_image(llm_request):
         size="1024x1024",
         n=1
     )
-    
-    get_config().log(str(response))
 
     revised_prompt = response.data[0].revised_prompt
     image_url = response.data[0].url
