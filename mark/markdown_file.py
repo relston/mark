@@ -4,6 +4,7 @@ from langchain_core.utils.image import image_to_data_url
 from langchain_core.documents import Document
 from io import TextIOWrapper
 from textwrap import dedent
+import click
 
 """
 MarkdownFile
@@ -100,7 +101,8 @@ class Image(PageReference):
             try:
                 return image_to_data_url(self.uri)
             except (FileNotFoundError, IsADirectoryError) as e:
-                print(f"Sorry, {e.filename} does not exist.")
+                click.echo(f"Image Reference {self.src} not found. Skipping")
+                return ''
         
 class Link(PageReference):
     # Regular expression to find Markdown link syntax
@@ -112,6 +114,9 @@ class Link(PageReference):
         self._document = None
     
     def __str__(self):
+        if not self.document:
+            return f"\nNo document found for: {self.src}\n"
+        
         serialized_document = dedent(f"""
         Link Text: {self.link_text}
         SRC: {self.src}
@@ -124,21 +129,22 @@ class Link(PageReference):
     @property
     def document(self):
         if not self._document:
-            self._document = self._get_document(self.uri)    
-            self._document.metadata['link text'] = self.link_text
+            try:
+                self._document = self._get_document(self.uri)    
+                self._document.metadata['link text'] = self.link_text
+            except (FileNotFoundError, IsADirectoryError) as e:
+                click.echo(f"Link Reference {self.src} not found. Skipping")
+                return
         return self._document
     
     def _get_document(self, uri):
         if self.is_web_reference():
             return self._request_page_content(uri)    
         else:
-            try:
-                with open(uri, 'r') as file:
-                    file_content = file.read()
-                    file_document = Document(page_content=file_content, metadata={'title': os.path.basename(uri)})
-                    return file_document
-            except (FileNotFoundError, IsADirectoryError) as e:
-                print(f"Sorry, {e.filename} does not exist.")
+            with open(uri, 'r') as file:
+                file_content = file.read()
+                file_document = Document(page_content=file_content, metadata={'title': os.path.basename(uri)})
+                return file_document
     
     def _request_page_content(self, uri):
         # Only used if the link is a web reference
