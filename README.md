@@ -9,6 +9,7 @@ Why Markdown + GPT? For a full rundown of the benefits and use cases, check out 
 - Local and remote links are scraped for context
 - GPT responses appended directly into Markdown files
 - `stdin` and `stdout` support for piping
+- Support for Image Generation 
 
 ## Example
 ```markdown
@@ -67,6 +68,16 @@ The system prompts folder is located at `~/.mark/system_prompts` and it includes
 # ~/.mark/system_prompts/custom.md
 mark path/to/markdown.md --system custom
 ```
+
+## Override the OpenAI API endpoint
+If you want to use a different LLM API endpoint that is fully compatible with the OpenAI API, set the `OPENAI_API_BASE_URL` environment variable to that endpoint value. This should enable you to use OpenAI proxy services like [credal.ai](https://www.credal.ai/), or other LLMs that are compatible with the OpenAI SDK. 
+
+## Image Generation 
+To generate an image based on the input just add the `--generate-image` flag to the command
+```bash
+mark path/to/markdown.md --generate-image
+```
+This will generate an image using the 'dall-e-3' model and append it to the markdown file.
 
 # Development
 ## Local Setup
