@@ -1,3 +1,6 @@
+![Build Status](https://img.shields.io/github/actions/workflow/status/relston/mark/.github/workflows/python-package.yml)
+![License](https://img.shields.io/github/license/relston/mark)
+
 # Mark
 **Mark lets you seamlessly use markdown, images and links to interact with GPT4o**
 
