@@ -95,3 +95,8 @@ poetry run mark path/to/markdown.md
 ```bash
 poetry run python -m pytest
 ```
+
+## Auto-fix lint errors
+```bash
+poetry run autopep8 --in-place --aggressive --aggressive --recursive .
+```

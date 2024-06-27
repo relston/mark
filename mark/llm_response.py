@@ -1,5 +1,6 @@
 from textwrap import dedent
 
+
 class LLMResponse(object):
     RESPONSE_TEMPLATE = dedent(
         """
@@ -21,20 +22,20 @@ class LLMResponse(object):
 
     def to_markdown(self):
         content = self.content
-        return self.RESPONSE_TEMPLATE.format(model=self.model, system=self.system, content=content)
+        return self.RESPONSE_TEMPLATE.format(
+            model=self.model, system=self.system, content=content)
 
-    
+
 class LLMImageResponse(LLMResponse):
     def __init__(self, image_url, model, revised_prompt=None):
         super().__init__(image_url, model)
         self.revised_prompt = revised_prompt
-    
+
     def to_markdown(self):
         content = f"![Generated Image]({self.content})"
 
         if self.revised_prompt:
             content = f"{self.revised_prompt}\n\n{content}"
-        
-        return self.RESPONSE_TEMPLATE.format(model=self.model, system=self.system, content=content)
 
-
+        return self.RESPONSE_TEMPLATE.format(
+            model=self.model, system=self.system, content=content)

@@ -8,16 +8,18 @@ MODEL = "gpt-4o-2024-05-13"
 DALL_E_MODEL = "dall-e-3"
 
 # TODO: Move this config logic to the config class
-OPENAI_BASE_URL  = os.getenv('OPENAI_API_BASE_URL', openai.base_url )
+OPENAI_BASE_URL = os.getenv('OPENAI_API_BASE_URL', openai.base_url)
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 if not OPENAI_API_KEY:
-    click.echo("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
+    click.echo(
+        "OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
     exit(1)
 
 client = openai.OpenAI(
     api_key=OPENAI_API_KEY,
     base_url=OPENAI_BASE_URL
 )
+
 
 def handle_openai_errors(func):
     def error_handler(*args, **kwargs):
@@ -27,7 +29,7 @@ def handle_openai_errors(func):
             click.echo(f"{OPENAI_BASE_URL} could not be reached")
             click.echo(e.__cause__)
             exit(1)
-        except openai.RateLimitError as e:
+        except openai.RateLimitError:
             click.echo("RateLimitError was received; we should back off a bit.")
             exit(1)
         except openai.BadRequestError as e:
@@ -50,15 +52,20 @@ def get_completion(llm_request):
     get_config().log(llm_request.to_log())
 
     response_text = _call_completion(llm_request.to_payload(), MODEL)
-    
+
     return LLMResponse(response_text, MODEL)
+
 
 def generate_image(llm_request):
     get_config().log(llm_request.to_log())
 
-    response =  _call_generate_image(llm_request.to_flat_prompt(), DALL_E_MODEL)
+    response = _call_generate_image(llm_request.to_flat_prompt(), DALL_E_MODEL)
 
-    return LLMImageResponse(response.url, DALL_E_MODEL, response.revised_prompt)
+    return LLMImageResponse(
+        response.url,
+        DALL_E_MODEL,
+        response.revised_prompt)
+
 
 @handle_openai_errors
 def _call_generate_image(prompt, model):
@@ -70,6 +77,7 @@ def _call_generate_image(prompt, model):
     )
 
     return response.data[0]
+
 
 @handle_openai_errors
 def _call_completion(messages, model):
