@@ -2,24 +2,29 @@ from datetime import datetime
 import os
 from importlib.resources import read_text
 
-DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.198 Safari/537.36'
+DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' + \
+    ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.198 Safari/537.36'
 
 # Initialize and setup
+
+
 class Config:
     DEFAULT_SYSTEM_PROMPT_TEMPLATE_PATH = 'templates/default_system_prompt.md'
 
     def __init__(self):
-        self.config_dir = os.getenv('MARK_CONFIG_PATH', os.path.expanduser("~/.mark"))
+        self.config_dir = os.getenv(
+            'MARK_CONFIG_PATH',
+            os.path.expanduser("~/.mark"))
         self.system_prompts_dir = f"/{self.config_dir}/system_prompts"
         self.default_system_prompt = f"{self.system_prompts_dir}/default.md"
         self.log_folder = f"{self.config_dir}/logs"
-        
+
         if not os.path.exists(self.system_prompts_dir):
             os.makedirs(self.system_prompts_dir)
 
         if not os.path.exists(self.default_system_prompt):
             default_config = read_text('templates', 'default_system_prompt.md')
-            
+
             with open(os.path.expanduser(self.default_system_prompt), "w") as file:
                 file.write(default_config)
 
@@ -37,7 +42,7 @@ class Config:
                 system_prompt_name = os.path.splitext(filename)[0]
                 system_prompts[system_prompt_name] = file.read()
         return system_prompts
-    
+
     def log(self, content):
         # Get current date and time as string
         dt_string = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
@@ -45,7 +50,9 @@ class Config:
         with open(log_file, "w") as file:
             file.write(content)
 
+
 _config = None
+
 
 def reset():
     """
@@ -53,6 +60,7 @@ def reset():
     """
     global _config
     _config = None
+
 
 def get_config():
     """

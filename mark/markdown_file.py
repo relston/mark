@@ -10,6 +10,8 @@ import click
 MarkdownFile
 Parses the markdown and extracts image elements from the file, resolving the paths of local images.
 """
+
+
 class MarkdownFile:
     def __init__(self, file_wrapper: TextIOWrapper):
         """
@@ -25,7 +27,7 @@ class MarkdownFile:
         self.file_content = file_wrapper.read()
         self._images = None
         self._links = None
-        
+
     @property
     def content(self):
         """
@@ -38,26 +40,27 @@ class MarkdownFile:
         if not self._images:
             self._images = self._parse_elements(Image)
         return self._images
-        
+
     @property
     def links(self):
         if not self._links:
             self._links = self._parse_elements(Link)
         return self._links
-    
+
     def _parse_elements(self, cls):
         matches = re.findall(cls.REGX_PATTERN, self.file_content)
         return [
-            cls.from_reference_folder(self.file_dir) \
-                    .with_src(src) \
-                    .with_text(text)
-            for text, src in matches    
+            cls.from_reference_folder(self.file_dir)
+            .with_src(src)
+            .with_text(text)
+            for text, src in matches
         ]
-    
+
     # def _resolve_file_dir(self, file_wrapper):
     #     if hasattr(file_wrapper, 'name'):
     #         return os.path.dirname(file_wrapper.name) if file_wrapper.name != '<stdin>' else None
     #     return os.getcwd()
+
 
 class PageReference:
     @classmethod
@@ -75,19 +78,23 @@ class PageReference:
         self.src = src
         self._resolve_uri()
         return self
-    
+
     def with_text(self, text):
         self.link_text = text
         return self
-    
+
     def is_web_reference(self):
         return self.src.startswith("http")
-    
+
     def _resolve_uri(self):
         if self.is_web_reference():
             self.uri = self.src
         else:
-            self.uri = os.path.normpath(os.path.join(self.reference_folder, self.src))
+            self.uri = os.path.normpath(
+                os.path.join(
+                    self.reference_folder,
+                    self.src))
+
 
 class Image(PageReference):
     # Regular expression to find Markdown image syntax with alt text
@@ -100,10 +107,11 @@ class Image(PageReference):
         else:
             try:
                 return image_to_data_url(self.uri)
-            except (FileNotFoundError, IsADirectoryError) as e:
+            except (FileNotFoundError, IsADirectoryError):
                 click.echo(f"Image Reference {self.src} not found. Skipping")
                 return ''
-        
+
+
 class Link(PageReference):
     # Regular expression to find Markdown link syntax
     # it will match `[text](url)` but not `![text](url)`
@@ -112,11 +120,11 @@ class Link(PageReference):
     def __init__(self, reference_folder, src=None):
         super().__init__(reference_folder, src)
         self._document = None
-    
+
     def __str__(self):
         if not self.document:
             return f"\nNo document found for: {self.src}\n"
-        
+
         serialized_document = dedent(f"""
         Link Text: {self.link_text}
         SRC: {self.src}
@@ -130,26 +138,27 @@ class Link(PageReference):
     def document(self):
         if not self._document:
             try:
-                self._document = self._get_document(self.uri)    
+                self._document = self._get_document(self.uri)
                 self._document.metadata['link text'] = self.link_text
-            except (FileNotFoundError, IsADirectoryError) as e:
+            except (FileNotFoundError, IsADirectoryError):
                 click.echo(f"Link Reference {self.src} not found. Skipping")
                 return
         return self._document
-    
+
     def _get_document(self, uri):
         if self.is_web_reference():
-            return self._request_page_content(uri)    
+            return self._request_page_content(uri)
         else:
             with open(uri, 'r') as file:
                 file_content = file.read()
-                file_document = Document(page_content=file_content, metadata={'title': os.path.basename(uri)})
+                file_document = Document(
+                    page_content=file_content, metadata={
+                        'title': os.path.basename(uri)})
                 return file_document
-    
+
     def _request_page_content(self, uri):
         # Only used if the link is a web reference
         from langchain_community.document_loaders import WebBaseLoader
-        
+
         web_document, *_ = WebBaseLoader(uri).load()
         return web_document
-        
