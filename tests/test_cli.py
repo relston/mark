@@ -64,10 +64,19 @@ class TestCLI:
         create_file("./docs/another-reference.md", "Another reference content")
 
         # and the external url link returns this response
-        mock_web_page(
-            "https://example.com/some-article",
-            "Example link title",
-            "Content of the external url link")
+        html_content = """
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Basic HTML Page</title>
+        </head>
+        <body>
+            <h1>Welcome to My Page</h1>
+            <a href="https://www.example.com">Visit Example.com</a>
+        </body>
+        </html>
+        """
+        mock_web_page('https://example.com/some-article', html_content)
 
         # and llm returning this response
         mock_llm_response.return_value = "Test completion"
@@ -88,13 +97,22 @@ class TestCLI:
             """
         )
 
-        self.default_expected_system_message = dedent(
+        self.default_expected_context = dedent(
             """
             Link Text: External URL
             SRC: https://example.com/some-article
-            Page Title: Example link title
+            Page Title: Basic HTML Page
             Page Content:
-            Content of the external url link
+
+
+            Basic HTML Page
+
+            Welcome to My Page
+            ==================
+
+            [Visit Example.com](https://www.example.com)
+
+
             ---
             Link Text: Anther Reference
             SRC: ./docs/another-reference.md
@@ -102,7 +120,10 @@ class TestCLI:
             Page Content:
             Another reference content
             """
-        ) + self.default_system_prompt
+        )
+
+        self.default_expected_system_message = self.default_expected_context + \
+            self.default_system_prompt
 
         self.default_expected_llm_request = [
             {'role': 'system', 'content': self.default_expected_system_message},
@@ -156,22 +177,8 @@ class TestCLI:
         # Run the CLI command with the custom agent
         command([str(self.markdown_file), '--system=custom'], None, None, False)
 
-        expected_system_message = dedent(
-            """
-            Link Text: External URL
-            SRC: https://example.com/some-article
-            Page Title: Example link title
-            Page Content:
-            Content of the external url link
-            ---
-            Link Text: Anther Reference
-            SRC: ./docs/another-reference.md
-            Page Title: another-reference.md
-            Page Content:
-            Another reference content
-
-            You're a custom agent that ....."""
-        )
+        expected_system_message = self.default_expected_context + \
+            "\nYou're a custom agent that ....."
 
         # The llm will be called with the following request
         expected_llm_request = [

@@ -2,11 +2,6 @@ from datetime import datetime
 import os
 from importlib.resources import read_text
 
-DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' + \
-    ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.198 Safari/537.36'
-
-# Initialize and setup
-
 
 class Config:
     DEFAULT_SYSTEM_PROMPT_TEMPLATE_PATH = 'templates/default_system_prompt.md'
@@ -30,9 +25,6 @@ class Config:
 
         if not os.path.exists(self.log_folder):
             os.makedirs(self.log_folder)
-
-        if not os.environ.get("USER_AGENT"):
-            os.environ["USER_AGENT"] = DEFAULT_USER_AGENT
 
     def system_prompts(self):
         system_prompts = {}

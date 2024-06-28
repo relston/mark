@@ -5,6 +5,7 @@ from langchain_core.documents import Document
 from io import TextIOWrapper
 from textwrap import dedent
 import click
+from mark import scraper
 
 """
 MarkdownFile
@@ -147,7 +148,7 @@ class Link(PageReference):
 
     def _get_document(self, uri):
         if self.is_web_reference():
-            return self._request_page_content(uri)
+            return scraper.get(uri).to_document()
         else:
             with open(uri, 'r') as file:
                 file_content = file.read()
@@ -155,10 +156,3 @@ class Link(PageReference):
                     page_content=file_content, metadata={
                         'title': os.path.basename(uri)})
                 return file_document
-
-    def _request_page_content(self, uri):
-        # Only used if the link is a web reference
-        from langchain_community.document_loaders import WebBaseLoader
-
-        web_document, *_ = WebBaseLoader(uri).load()
-        return web_document
