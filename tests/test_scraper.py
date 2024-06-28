@@ -30,6 +30,6 @@ def test_timeout_error_handling():
     with patch('mark.scraper._render_page', side_effect=pyppeteer.errors.TimeoutError):
         page = scraper.get('https://timeout-test.com')
 
-        assert page.body == 'Timeout while fetching https://timeout-test.com'
+        assert page.body == 'Timeout while fetching page'
         assert page.title is None, "Expected no title when a TimeoutError occurs"
         assert page.url == 'https://timeout-test.com', "URL should be correct even when timeout occurs"

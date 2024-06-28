@@ -1,3 +1,4 @@
+import warnings
 import click
 import re
 import asyncio
@@ -50,20 +51,25 @@ def get_rendered_html(url: str) -> str:
         return asyncio.run(_render_page(url))
     except pyppeteer.errors.TimeoutError:
         click.echo(f"Timeout while fetching {url}")
-        return f"Timeout while fetching {url}"
+        return f"Timeout while fetching page"
 
 
 async def _render_page(url: str) -> str:
-    browser = await pyppeteer.launch()
-    page = await browser.newPage()
-    await page.setUserAgent(DEFAULT_USER_AGENT)
-    await page.goto(url)
-    rendered_html = await page.content()
-    await browser.close() if browser else None
+    try:
+        browser = await pyppeteer.launch()
+        page = await browser.newPage()
+        await page.setUserAgent(DEFAULT_USER_AGENT)
+        await page.goto(url)
+        rendered_html = await page.content()
+    finally:
+        if browser and browser.process and browser.process.returncode is None:
+            await browser.close()
     return rendered_html
 
 
 def _clean_soup_from_html(html: str) -> BeautifulSoup:
+    # warnings.filterwarnings("ignore")
+
     soup = BeautifulSoup(html, 'html.parser')
 
     # List of tags to decompose
