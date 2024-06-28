@@ -1,7 +1,8 @@
+import click
 import re
 import asyncio
+import pyppeteer
 from bs4 import BeautifulSoup
-from pyppeteer import launch
 from markdownify import MarkdownConverter
 from langchain_core.documents import Document
 
@@ -45,16 +46,20 @@ def get(url: str) -> Page:
 
 
 def get_rendered_html(url: str) -> str:
-    return asyncio.run(_render_page(url))
+    try:
+        return asyncio.run(_render_page(url))
+    except pyppeteer.errors.TimeoutError:
+        click.echo(f"Timeout while fetching {url}")
+        return f"Timeout while fetching {url}"
 
 
 async def _render_page(url: str) -> str:
-    browser = await launch()
+    browser = await pyppeteer.launch()
     page = await browser.newPage()
     await page.setUserAgent(DEFAULT_USER_AGENT)
     await page.goto(url)
     rendered_html = await page.content()
-    await browser.close()
+    await browser.close() if browser else None
     return rendered_html
 
 
