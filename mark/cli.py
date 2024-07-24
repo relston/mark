@@ -7,8 +7,8 @@ from mark.config import get_config
 
 @click.command()
 @click.argument('input', type=click.File())
-@click.option('--system', type=click.STRING, default='default')
-@click.option('--generate-image', is_flag=True, default=False,
+@click.option('--system', '-s', type=click.STRING, default='default')
+@click.option('--generate-image', '-i', is_flag=True, default=False,
               help='EXPERIMENTAL: Generate an image using DALL-E.')
 def command(input, system, generate_image):
     """
