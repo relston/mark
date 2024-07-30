@@ -3,19 +3,32 @@ from mark import llm
 from mark.llm_request import LLMRequest
 from mark.markdown_file import MarkdownFile
 from mark.config import get_config
+from importlib.metadata import version, PackageNotFoundError
+
+try:
+    package_version = version("mark")
+except PackageNotFoundError:
+    package_version = "unknown"
 
 
 @click.command()
-@click.argument('input', type=click.File())
-@click.option('--system', '-s', type=click.STRING, default='default')
+@click.argument('file', type=click.File())
+@click.option('--system', '-s', type=click.STRING, default='default', help='The system prompt to use')
 @click.option('--generate-image', '-i', is_flag=True, default=False,
               help='EXPERIMENTAL: Generate an image using DALL-E.')
-def command(input, system, generate_image):
+@click.version_option(version=package_version)
+def command(file, system, generate_image):
     """
-    Command line tool that processes an input file with a specified agent to generate and record a response.
+    Markdown powered LLM CLI - Multi-modal AI text generation tool
+
+    In-document Thread Example:
+    mark path/to/markdown.md
+
+    stdin Example:
+    echo "Hello, World!" | mark -
     """
     system_prompt = get_config().system_prompts().get(system, 'default')
-    markdown_file = MarkdownFile(input)
+    markdown_file = MarkdownFile(file)
     request = LLMRequest() \
         .with_prompt(markdown_file.content) \
         .with_system_message(system_prompt)

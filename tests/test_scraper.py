@@ -26,6 +26,7 @@ def test_page_scrape(mock_web_page):
     assert page.body == '\n\nBasic HTML Page\n\nWelcome to My Page\n' + \
         '==================\n\n[Visit Example.com](https://www.example.com)\n\n'
 
+
 def test_timeout_error_handling():
     with patch('mark.scraper._render_page', side_effect=pyppeteer.errors.TimeoutError):
         page = scraper.get('https://timeout-test.com')
