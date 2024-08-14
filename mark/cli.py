@@ -10,14 +10,18 @@ try:
 except PackageNotFoundError:
     package_version = "unknown"
 
+DEFAULT_MODEL = "gpt-4o"
+DALL_E_MODEL = "dall-e-3"
 
 @click.command()
 @click.argument('file', type=click.File())
-@click.option('--system', '-s', type=click.STRING, default='default', help='The system prompt to use')
+@click.option('--system', '-s', type=click.STRING,
+              default='default', help='The system prompt to use')
+@click.option('--model', '-m', type=click.STRING, help='The llm model')
 @click.option('--generate-image', '-i', is_flag=True, default=False,
               help='EXPERIMENTAL: Generate an image using DALL-E.')
 @click.version_option(version=package_version)
-def command(file, system, generate_image):
+def command(file, system, model, generate_image):
     """
     Markdown powered LLM CLI - Multi-modal AI text generation tool
 
@@ -29,7 +33,11 @@ def command(file, system, generate_image):
     """
     system_prompt = get_config().system_prompts().get(system, 'default')
     markdown_file = MarkdownFile(file)
-    request = LLMRequest() \
+
+    if not model:
+        model = DALL_E_MODEL if generate_image else DEFAULT_MODEL
+
+    request = LLMRequest(model) \
         .with_prompt(markdown_file.content) \
         .with_system_message(system_prompt)
 

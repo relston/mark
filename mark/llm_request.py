@@ -2,12 +2,13 @@ from textwrap import dedent
 
 
 class LLMRequest:
-    def __init__(self):
+    def __init__(self, model):
         """
         Can serialize itself into a payload that can be sent to the OpenAI API (potentially others in the future)
         """
         self.system_message = None
         self.prompt = None
+        self.model = model
         self.images = []
         self.links = []
 

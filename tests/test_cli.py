@@ -143,12 +143,12 @@ class TestCLI:
         command([str(self.markdown_file)], None, None, False)
 
         mock_llm_response.assert_called_once_with(
-            self.default_expected_llm_request, 'gpt-4o-2024-05-13')
+            self.default_expected_llm_request, 'gpt-4o')
 
         # The markdown file will be updated with the response
         expected_markdown_file_content = self.mock_markdown_file_content + \
             dedent("""
-            # GPT Response (model: gpt-4o-2024-05-13, system: default)
+            # GPT Response (model: gpt-4o, system: default)
             Test completion
 
             # User Response
@@ -164,7 +164,7 @@ class TestCLI:
         command(['-'], None, None, False)
 
         mock_llm_response.assert_called_once_with(
-            self.default_expected_llm_request, 'gpt-4o-2024-05-13')
+            self.default_expected_llm_request, 'gpt-4o')
         mock_stdout.assert_called_once_with("Test completion")
 
     def test_command_custom_agent(self, create_file, mock_llm_response):
@@ -192,12 +192,12 @@ class TestCLI:
             }
         ]
         mock_llm_response.assert_called_once_with(
-            expected_llm_request, 'gpt-4o-2024-05-13')
+            expected_llm_request, 'gpt-4o')
 
         # The markdown file will be updated indicating the custom agent
         expected_markdown_file_content = self.mock_markdown_file_content + \
             dedent("""
-            # GPT Response (model: gpt-4o-2024-05-13, system: custom)
+            # GPT Response (model: gpt-4o, system: custom)
             Test completion
 
             # User Response

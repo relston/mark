@@ -65,8 +65,14 @@ cat path/to/markdown.md | mark
 # LLM response....
 ```
 
+## Use a specific LLM model
+You can specify a different LLM model to use with the `--model` (or `-m`) flag
+```bash
+mark path/to/markdown.md --model gpt-4o-2024-05-13
+```
+
 ## Custom system prompts
-The system prompts folder is located at `~/.mark/system_prompts` and it includes a `default.md` prompt. You can add any additional system prompts you'd like to use in this folder and use them with the `--system` flag.
+The system prompts folder is located at `~/.mark/system_prompts` and it includes a `default.md` prompt. You can add any additional system prompts you'd like to use in this folder and use them with the `--system` (or `-s`) flag.
 ```bash
 # ~/.mark/system_prompts/custom.md
 mark path/to/markdown.md --system custom
@@ -76,7 +82,7 @@ mark path/to/markdown.md --system custom
 If you want to use a different LLM API endpoint that is fully compatible with the OpenAI API, set the `OPENAI_API_BASE_URL` environment variable to that endpoint value. This should enable you to use OpenAI proxy services like [credal.ai](https://www.credal.ai/), or other LLMs that are compatible with the OpenAI SDK. 
 
 ## Image Generation 
-To generate an image based on the input just add the `--generate-image` flag to the command
+To generate an image based on the input just add the `--generate-image` (or `-i`) flag to the command
 ```bash
 mark path/to/markdown.md --generate-image
 ```

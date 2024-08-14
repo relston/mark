@@ -4,9 +4,6 @@ import openai
 from mark.config import get_config
 from mark.llm_response import LLMResponse, LLMImageResponse
 
-MODEL = "gpt-4o-2024-05-13"
-DALL_E_MODEL = "dall-e-3"
-
 # TODO: Move this config logic to the config class
 OPENAI_BASE_URL = os.getenv('OPENAI_API_BASE_URL', openai.base_url)
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
@@ -51,19 +48,22 @@ def get_completion(llm_request):
     """
     get_config().log(llm_request.to_log())
 
-    response_text = _call_completion(llm_request.to_payload(), MODEL)
+    response_text = _call_completion(
+        llm_request.to_payload(), llm_request.model)
 
-    return LLMResponse(response_text, MODEL)
+    return LLMResponse(response_text, llm_request.model)
 
 
 def generate_image(llm_request):
     get_config().log(llm_request.to_log())
 
-    response = _call_generate_image(llm_request.to_flat_prompt(), DALL_E_MODEL)
+    response = _call_generate_image(
+        llm_request.to_flat_prompt(),
+        llm_request.model)
 
     return LLMImageResponse(
         response.url,
-        DALL_E_MODEL,
+        llm_request.model,
         response.revised_prompt)
 
 
