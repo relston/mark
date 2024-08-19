@@ -19,7 +19,7 @@ beautifulsoup4 = "^4.12.3"
 langchain = "^0.2.1"
 langchain-community = "^0.2.4"
 pyppeteer = "^2.0.0"
-markdownify = "^0.12.1"
+markdownify = "^0.13.1"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.2"
