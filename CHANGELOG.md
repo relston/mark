@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### [0.8.1] - 2024-08-13
+#### Changed
+- Bump langchain from 0.2.14 to 0.2.15
+- Bump httpx from 0.27.0 to 0.27.2
+- Bump openai from 1.42.0 to 1.43.0
+- Bump ipython from 8.26.0 to 8.27.0
+- Bump langchain-community from 0.2.4 to 0.2.12
+- Bump openai from 1.41.1 to 1.42.0
+- Bump openai from 1.14.2 to 1.41.1
+- Bump langchain from 0.2.1 to 0.2.14
+- Bump markdownify from 0.12.1 to 0.13.1
+- Bump pyyaml from 6.0.1 to 6.0.2
+- Bump langchain-community from 0.2.1 to 0.2.4
+- Bump ipython from 8.21.0 to 8.26.0
+- Bump flake8 from 7.1.0 to 7.1.1
+- Bump pytest from 6.2.5 to 8.3.
+
 ### [0.8.0] - 2024-08-13
 #### Added
 - Support for `--model` option to allow for selecting a specific OpenAI model
