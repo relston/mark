@@ -17,7 +17,7 @@ openai = "1.43.0"
 click = "^8.1.7"
 beautifulsoup4 = "^4.12.3"
 langchain = "^0.2.15"
-langchain-community = "^0.2.12"
+langchain-community = "^0.2.15"
 pyppeteer = "^2.0.0"
 markdownify = "^0.13.1"
 
