@@ -4,6 +4,8 @@
 # Mark
 **Mark lets you seamlessly use markdown, images and links to interact with GPT4o**
 
+> "Markdown is still the best format for feeding into language models" <br/> - Simon Willison (co-creator of Django)
+
 Why Markdown + GPT? For a full rundown of the benefits and use cases, check out [Introducing 'Mark', a Markdown CLI tool for GPT4o](https://relston.github.io/markdown/gpt4o/cli/2024/06/07/introducing-mark.html)
 
 ## Key Features
