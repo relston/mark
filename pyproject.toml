@@ -12,7 +12,7 @@ include = [
 [tool.poetry.dependencies]
 python = "^3.10"
 PyYAML = "6.0.2"
-ipython = "8.27.0"
+ipython = "8.28.0"
 openai = "1.51.2"
 click = "^8.1.7"
 beautifulsoup4 = "^4.12.3"
