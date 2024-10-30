@@ -49,12 +49,16 @@ def get(url: str) -> Page:
 def get_rendered_html(url: str) -> str:
     try:
         return asyncio.run(_render_page(url))
+    except pyppeteer.errors.BrowserError:
+        click.echo(f"BrowserError while fetching {url}")
+        return "BrowserError while fetching"
     except pyppeteer.errors.TimeoutError:
         click.echo(f"Timeout while fetching {url}")
-        return f"Timeout while fetching page"
+        return "Timeout while fetching page"
 
 
 async def _render_page(url: str) -> str:
+    browser = None
     try:
         browser = await pyppeteer.launch()
         page = await browser.newPage()
@@ -62,7 +66,7 @@ async def _render_page(url: str) -> str:
         await page.goto(url)
         rendered_html = await page.content()
     finally:
-        if browser and browser.process and browser.process.returncode is None:
+        if browser:
             await browser.close()
     return rendered_html
 

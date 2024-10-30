@@ -13,6 +13,7 @@ except PackageNotFoundError:
 DEFAULT_MODEL = "gpt-4o"
 DALL_E_MODEL = "dall-e-3"
 
+
 @click.command()
 @click.argument('file', type=click.File())
 @click.option('--system', '-s', type=click.STRING,
