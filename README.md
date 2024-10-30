@@ -111,3 +111,7 @@ poetry run python -m pytest
 ```bash
 poetry run autopep8 --in-place --aggressive --aggressive --recursive .
 ```
+
+
+##
+Downloading Chromium 129.0.6668.29 (playwright build v1134) from https://playwright.azureedge.net/builds/chromium/1134/chromium-linux.zip

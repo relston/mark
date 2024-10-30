@@ -3,6 +3,7 @@ from mark import llm
 from mark.llm_request import LLMRequest
 from mark.markdown_file import MarkdownFile
 from mark.config import get_config
+from mark.scraper import install_playwright
 from importlib.metadata import version, PackageNotFoundError
 
 try:
@@ -22,6 +23,7 @@ DALL_E_MODEL = "dall-e-3"
               help='EXPERIMENTAL: Generate an image using DALL-E.')
 @click.version_option(version=package_version)
 def command(file, system, model, generate_image):
+    # install_playwright()
     """
     Markdown powered LLM CLI - Multi-modal AI text generation tool
 

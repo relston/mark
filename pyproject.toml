@@ -18,8 +18,8 @@ click = "^8.1.7"
 beautifulsoup4 = "^4.12.3"
 langchain = "^0.2.16"
 langchain-community = "^0.2.15"
-pyppeteer = "^2.0.0"
 markdownify = "^0.13.1"
+playwright = "^1.47.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^8.3.3"

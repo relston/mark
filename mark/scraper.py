@@ -2,14 +2,14 @@ import warnings
 import click
 import re
 import asyncio
-import pyppeteer
+from playwright.async_api import async_playwright, TimeoutError as PlaywrightTimeoutError
+import playwright.sync_api as playwright_api
 from bs4 import BeautifulSoup
 from markdownify import MarkdownConverter
 from langchain_core.documents import Document
 
 DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' + \
     ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.198 Safari/537.36'
-
 
 class Page(object):
     def __init__(
@@ -49,22 +49,34 @@ def get(url: str) -> Page:
 def get_rendered_html(url: str) -> str:
     try:
         return asyncio.run(_render_page(url))
-    except pyppeteer.errors.TimeoutError:
+    except PlaywrightTimeoutError:
         click.echo(f"Timeout while fetching {url}")
         return f"Timeout while fetching page"
 
-
 async def _render_page(url: str) -> str:
-    try:
-        browser = await pyppeteer.launch()
-        page = await browser.newPage()
-        await page.setUserAgent(DEFAULT_USER_AGENT)
-        await page.goto(url)
-        rendered_html = await page.content()
-    finally:
-        if browser and browser.process and browser.process.returncode is None:
+    async with async_playwright() as p:
+        browser = await p.chromium.launch()
+        page = await browser.new_page()
+        try:
+            await page.set_user_agent(DEFAULT_USER_AGENT)
+            await page.goto(url)
+            rendered_html = await page.content()
+            return rendered_html
+        finally:
             await browser.close()
-    return rendered_html
+
+# async def _render_page(url: str) -> str:
+#     browser = None 
+#     try:
+#         browser = await pyppeteer.launch()
+#         page = await browser.newPage()
+#         await page.setUserAgent(DEFAULT_USER_AGENT)
+#         await page.goto(url)
+#         rendered_html = await page.content()
+#     finally:
+#         if browser and browser.process and browser.process.returncode is None:
+#             await browser.close()
+#     return rendered_html
 
 
 def _clean_soup_from_html(html: str) -> BeautifulSoup:
@@ -94,3 +106,9 @@ def _clean_soup_from_html(html: str) -> BeautifulSoup:
 def _markdown_from_soup(soup: BeautifulSoup) -> str:
     raw_markdown_text = MarkdownConverter().convert_soup(soup)
     return re.sub(r'\n{3,}', '\n\n', raw_markdown_text)
+
+def install_playwright():
+       try:
+           playwright_api.sync_playwright().start().install()
+       except Exception as e:
+           print(f"An error occurred while installing Playwright browsers: {e}")
