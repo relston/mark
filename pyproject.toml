@@ -22,7 +22,7 @@ pyppeteer = "^2.0.0"
 markdownify = "^0.14.1"
 
 [tool.poetry.dev-dependencies]
-pytest = "^8.3.3"
+pytest = "^8.3.4"
 
 [tool.poetry.scripts]
 mark = "mark.__main__:cli.command"
