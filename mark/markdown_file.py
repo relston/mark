@@ -1,11 +1,12 @@
 import os
 import re
-from langchain_core.utils.image import image_to_data_url
 from langchain_core.documents import Document
 from io import TextIOWrapper
 from textwrap import dedent
 import click
 from mark import scraper
+import base64
+import mimetypes
 
 """
 MarkdownFile
@@ -57,11 +58,6 @@ class MarkdownFile:
             for text, src in matches
         ]
 
-    # def _resolve_file_dir(self, file_wrapper):
-    #     if hasattr(file_wrapper, 'name'):
-    #         return os.path.dirname(file_wrapper.name) if file_wrapper.name != '<stdin>' else None
-    #     return os.getcwd()
-
 
 class PageReference:
     @classmethod
@@ -107,10 +103,38 @@ class Image(PageReference):
             return self.uri
         else:
             try:
-                return image_to_data_url(self.uri)
+                return Image.image_to_data_url(self.uri)
             except (FileNotFoundError, IsADirectoryError):
                 click.echo(f"Image Reference {self.src} not found. Skipping")
                 return ''
+
+    @classmethod
+    def encode_image(cls, image_path: str) -> str:
+        """Get base64 string from image URI.
+
+        Args:
+            image_path: The path to the image.
+
+        Returns:
+            The base64 string of the image.
+        """
+        with open(image_path, "rb") as image_file:
+            return base64.b64encode(image_file.read()).decode("utf-8")
+
+    @classmethod
+    def image_to_data_url(cls, image_path: str) -> str:
+        """Get data URL from image URI.
+
+        Args:
+            image_path: The path to the image.
+
+        Returns:
+            The data URL of the image.
+        """
+        encoding = cls.encode_image(image_path)
+        mime_type = mimetypes.guess_type(image_path)[0]
+        return f"data:{mime_type};base64,{encoding}"
+
 
 
 class Link(PageReference):
