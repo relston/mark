@@ -5,6 +5,7 @@ import pytest
 import os
 import sys
 import io
+import llm
 from unittest.mock import Mock
 
 """
@@ -135,6 +136,11 @@ class TestCLI:
             ]
             }
         ]
+        self.default_expected_attachements = [
+            llm.Attachment(path='./images/sample.png'),
+            llm.Attachment(url='https://example.com/image.png'),
+            llm.Attachment(path='../images/outside.png')
+        ]
 
     def test_command_default(self, mock_llm_response):
         """Test CLI command without specifying an agent (default agent should be used)."""
@@ -143,7 +149,10 @@ class TestCLI:
         command([str(self.markdown_file)], None, None, False)
 
         mock_llm_response.assert_called_once_with(
-            self.default_expected_llm_request, 'gpt-4o')
+            self.mock_markdown_file_content, 
+            system=self.default_expected_system_message,
+            attachments=self.default_expected_attachements
+        )
 
         # The markdown file will be updated with the response
         expected_markdown_file_content = self.mock_markdown_file_content + \
@@ -164,7 +173,11 @@ class TestCLI:
         command(['-'], None, None, False)
 
         mock_llm_response.assert_called_once_with(
-            self.default_expected_llm_request, 'gpt-4o')
+            self.mock_markdown_file_content, 
+            system=self.default_expected_system_message,
+            attachments=self.default_expected_attachements
+        )
+
         mock_stdout.assert_called_once_with("Test completion")
 
     def test_command_custom_agent(self, create_file, mock_llm_response):
@@ -180,19 +193,11 @@ class TestCLI:
         expected_system_message = self.default_expected_context + \
             "\nYou're a custom agent that ....."
 
-        # The llm will be called with the following request
-        expected_llm_request = [
-            {'role': 'system', 'content': expected_system_message},
-            {'role': 'user', 'content': [
-                {'type': 'text', 'text': self.mock_markdown_file_content},
-                {'type': 'image_url', 'image_url': {'url': 'data:image/png;base64,c2FtcGxlIGltYWdlIGRhdGE='}},
-                {'type': 'image_url', 'image_url': {'url': 'https://example.com/image.png'}},
-                {'type': 'image_url', 'image_url': {'url': 'data:image/png;base64,b3V0c2lkZSBpbWFnZSBkYXRh'}},
-            ]
-            }
-        ]
         mock_llm_response.assert_called_once_with(
-            expected_llm_request, 'gpt-4o')
+            self.mock_markdown_file_content, 
+            system=expected_system_message,
+            attachments=self.default_expected_attachements
+        )
 
         # The markdown file will be updated indicating the custom agent
         expected_markdown_file_content = self.mock_markdown_file_content + \

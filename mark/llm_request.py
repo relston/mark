@@ -1,7 +1,18 @@
 from textwrap import dedent
+from .markdown_file  import Image, Link
+from typing import (
+    List,
+    Optional
+)
 
 
 class LLMRequest:
+    model: str
+    prompt: Optional[str]
+    system_message: Optional[str]
+    images: List[Image]
+    links: List[Link]
+
     def __init__(self, model):
         """
         Can serialize itself into a payload that can be sent to the OpenAI API (potentially others in the future)
@@ -28,7 +39,7 @@ class LLMRequest:
         self.links.append(document)
         return self
 
-    def system_content(self):
+    def system_content(self) -> str:
         system_content = ""
 
         if self.links:
@@ -55,10 +66,10 @@ class LLMRequest:
         user_message = {"role": "user", "content": user_content}
         return [system_message, user_message]
 
-    def to_flat_prompt(self):
+    def to_flat_prompt(self) -> str:
         return self.system_content() + "\n" + self.prompt
 
-    def to_log(self):
+    def to_log(self) -> str:
         return dedent("""
         # System message
         ---

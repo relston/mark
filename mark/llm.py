@@ -1,8 +1,12 @@
 import os
 import click
 import openai
+import llm
 from mark.config import get_config
+from mark.llm_request import LLMRequest
 from mark.llm_response import LLMResponse, LLMImageResponse
+import types
+
 
 # TODO: Move this config logic to the config class
 OPENAI_BASE_URL = os.getenv('OPENAI_API_BASE_URL', openai.base_url)
@@ -48,8 +52,7 @@ def get_completion(llm_request):
     """
     get_config().log(llm_request.to_log())
 
-    response_text = _call_completion(
-        llm_request.to_payload(), llm_request.model)
+    response_text = _llm_call_completion(llm_request)
 
     return LLMResponse(response_text, llm_request.model)
 
@@ -78,12 +81,17 @@ def _call_generate_image(prompt, model):
 
     return response.data[0]
 
-
 @handle_openai_errors
-def _call_completion(messages, model):
-    chat_completion = client.chat.completions.create(
-        messages=messages,
-        model=model,
-    )
+def _llm_call_completion(llm_request:LLMRequest) -> str:
+    model = llm.get_model(llm_request.model)
+    attachment = []
+    for image in llm_request.images:
+        if image.is_web_reference():
+            attachment.append(llm.Attachment(url=image.src))
+        else:
+            attachment.append(llm.Attachment(path=image.src))
 
-    return chat_completion.choices[0].message.content
+    # llm.Attachment(path="pelican.jpg"),
+    # llm.Attachment(url="https://static.simonwillison.net/static/2024/pelicans.jpg"),
+    # llm.Attachment(content=b"binary image content here")
+    return model.prompt(llm_request.prompt, system=llm_request.system_content(), attachments=attachment)
