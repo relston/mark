@@ -1,5 +1,5 @@
 from textwrap import dedent
-from .markdown_file  import Image, Link
+from .markdown_file import Image, Link
 from typing import (
     List,
     Optional

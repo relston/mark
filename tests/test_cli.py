@@ -149,7 +149,7 @@ class TestCLI:
         command([str(self.markdown_file)], None, None, False)
 
         mock_llm_response.assert_called_once_with(
-            self.mock_markdown_file_content, 
+            self.mock_markdown_file_content,
             system=self.default_expected_system_message,
             attachments=self.default_expected_attachements
         )
@@ -173,12 +173,27 @@ class TestCLI:
         command(['-'], None, None, False)
 
         mock_llm_response.assert_called_once_with(
-            self.mock_markdown_file_content, 
+            self.mock_markdown_file_content,
             system=self.default_expected_system_message,
             attachments=self.default_expected_attachements
         )
 
         mock_stdout.assert_called_once_with("Test completion")
+
+    def test_command_custom_model(self, mock_llm_get_model, mock_llm_response):
+        """
+        mark --model o1 path/to/markdown.md
+        """
+
+        command(['--model', 'o1', str(self.markdown_file)], None, None, False)
+
+        mock_llm_get_model.assert_called_once_with('o1')
+
+        mock_llm_response.assert_called_once_with(
+            self.mock_markdown_file_content,
+            system=self.default_expected_system_message,
+            attachments=self.default_expected_attachements
+        )
 
     def test_command_custom_agent(self, create_file, mock_llm_response):
         # Define a custom agent
@@ -194,7 +209,7 @@ class TestCLI:
             "\nYou're a custom agent that ....."
 
         mock_llm_response.assert_called_once_with(
-            self.mock_markdown_file_content, 
+            self.mock_markdown_file_content,
             system=expected_system_message,
             attachments=self.default_expected_attachements
         )

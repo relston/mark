@@ -81,8 +81,9 @@ def _call_generate_image(prompt, model):
 
     return response.data[0]
 
+
 @handle_openai_errors
-def _llm_call_completion(llm_request:LLMRequest) -> str:
+def _llm_call_completion(llm_request: LLMRequest) -> str:
     model = llm.get_model(llm_request.model)
     attachment = []
     for image in llm_request.images:
@@ -94,4 +95,7 @@ def _llm_call_completion(llm_request:LLMRequest) -> str:
     # llm.Attachment(path="pelican.jpg"),
     # llm.Attachment(url="https://static.simonwillison.net/static/2024/pelicans.jpg"),
     # llm.Attachment(content=b"binary image content here")
-    return model.prompt(llm_request.prompt, system=llm_request.system_content(), attachments=attachment)
+    return model.prompt(
+        llm_request.prompt,
+        system=llm_request.system_content(),
+        attachments=attachment)
