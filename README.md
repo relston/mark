@@ -45,13 +45,7 @@ This allows you to carry on a conversation directly in the markdown file - or si
 
 # Install the Mark CLI
 ```bash
-pipx install git+https://github.com/relston/mark.git
-```
-- *[Requires pipx](https://pipx.pypa.io/stable/installation/)*
-
-Updating the CLI:
-```bash
-pipx upgrade mark
+pip install mark
 ```
 
 # Usage
