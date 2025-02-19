@@ -1,14 +1,13 @@
 import os
 import click
-import openai
 import llm
+from llm.default_plugins.openai_models import openai
 from mark.config import get_config
 from mark.llm_request import LLMRequest
 from mark.llm_response import LLMResponse, LLMImageResponse
-import types
 
-
-# TODO: Move this config logic to the config class
+# TODO: Remove this. Only needed to support image generation.
+# Should differ to llm model registration
 OPENAI_BASE_URL = os.getenv('OPENAI_API_BASE_URL', openai.base_url)
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 if not OPENAI_API_KEY:
@@ -72,6 +71,7 @@ def generate_image(llm_request):
 
 @handle_openai_errors
 def _call_generate_image(prompt, model):
+    # TODO: Can I manually register the dall-e-3 using the llm api?
     response = client.images.generate(
         prompt=prompt,
         model=model,
