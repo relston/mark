@@ -1,5 +1,8 @@
 import click
+from click_default_group import DefaultGroup
+from click.testing import CliRunner
 from mark import llm
+from llm.cli import cli as llm_cli
 from mark.llm_request import LLMRequest
 from mark.markdown_file import MarkdownFile
 from mark.config import get_config
@@ -14,17 +17,26 @@ DEFAULT_MODEL = "gpt-4o"
 DALL_E_MODEL = "dall-e-3"
 
 
-@click.command()
+@click.group(
+    cls=DefaultGroup,
+    default="down",
+    default_if_no_args=True,
+)
+@click.version_option(version=package_version)
+def mark_cli():
+    """Markdown powered LLM CLI - Multi-modal AI text generation tool"""
+
+
+@mark_cli.command(name="down")
 @click.argument('file', type=click.File())
 @click.option('--system', '-s', type=click.STRING,
               default='default', help='The system prompt to use')
 @click.option('--model', '-m', type=click.STRING, help='The llm model')
 @click.option('--generate-image', '-i', is_flag=True, default=False,
               help='EXPERIMENTAL: Generate an image using DALL-E.')
-@click.version_option(version=package_version)
-def command(file, system, model, generate_image):
+def down(file, system, model, generate_image):
     """
-    Markdown powered LLM CLI - Multi-modal AI text generation tool
+    Default: Process markdown file or stdin
 
     In-document Thread Example:
     mark path/to/markdown.md
@@ -57,3 +69,17 @@ def command(file, system, model, generate_image):
             file.write(response.to_markdown())
     else:
         click.echo(response.content)
+
+
+@mark_cli.command("models")
+def models_command():
+    """List available llm models"""
+    runner = CliRunner()
+    result = runner.invoke(llm_cli, ["models"])
+    if result.exception:
+        raise click.ClickException(str(result.exception))
+    click.echo(result.output)
+
+
+if __name__ == "__main__":
+    mark_cli()

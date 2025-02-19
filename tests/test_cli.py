@@ -1,4 +1,4 @@
-from mark.cli import command
+from mark.cli import mark_cli
 from textwrap import dedent
 from mark import config
 import pytest
@@ -146,7 +146,7 @@ class TestCLI:
         """Test CLI command without specifying an agent (default agent should be used)."""
 
         # Run the CLI command with only the markdown file
-        command([str(self.markdown_file)], None, None, False)
+        mark_cli([str(self.markdown_file)], None, None, False)
 
         mock_llm_response.assert_called_once_with(
             self.mock_markdown_file_content,
@@ -170,7 +170,7 @@ class TestCLI:
         input = io.TextIOWrapper(io.BytesIO(byte_string), encoding='utf-8')
         sys.stdin = input
 
-        command(['-'], None, None, False)
+        mark_cli(['-'], None, None, False)
 
         mock_llm_response.assert_called_once_with(
             self.mock_markdown_file_content,
@@ -185,7 +185,7 @@ class TestCLI:
         mark --model o1 path/to/markdown.md
         """
 
-        command(['--model', 'o1', str(self.markdown_file)], None, None, False)
+        mark_cli(['--model', 'o1', str(self.markdown_file)], None, None, False)
 
         mock_llm_get_model.assert_called_once_with('o1')
 
@@ -203,7 +203,8 @@ class TestCLI:
         )
 
         # Run the CLI command with the custom agent
-        command([str(self.markdown_file), '--system=custom'], None, None, False)
+        mark_cli([str(self.markdown_file), '--system=custom'],
+                 None, None, False)
 
         expected_system_message = self.default_expected_context + \
             "\nYou're a custom agent that ....."
@@ -229,7 +230,8 @@ class TestCLI:
         Test CLI command with the --generate-image option.
         """
 
-        command([str(self.markdown_file), '--generate-image'], None, None, False)
+        mark_cli([str(self.markdown_file), '--generate-image'],
+                 None, None, False)
 
         expected_prompt = self.default_expected_system_message + \
             "\n" + self.mock_markdown_file_content
@@ -248,3 +250,13 @@ class TestCLI:
             """)
 
         assert self.markdown_file.read_text() == expected_markdown_file_content
+
+    def test_command_models(self, mock_stdout):
+        """
+        Test for `mark models`
+        """
+
+        mark_cli(['models'], None, None, False)
+
+        call = mock_stdout.call_args_list[0]
+        assert 'OpenAI Chat' in call[0][0]
