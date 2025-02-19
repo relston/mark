@@ -1,7 +1,24 @@
+[project]
+name = "mark"
+version = "0.9.0"
+description = "Mark lets you seamlessly use markdown, images and links to interact with LLMs"
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+
+[project.urls]
+Homepage = "https://github.com/relston/mark"
+Issues = "https://github.com/relston/mark/issues"
+
 [tool.poetry]
 name = "mark"
-version = "0.8.3"
-description = ""
+version = "0.9.0"
+description = "Mark lets you seamlessly use markdown, images and links to interact with LLMs"
 authors = ["Ryan Elston <elston.ryan@gmail.com>"]
 
 # Include additional files

@@ -6,13 +6,13 @@
 
 > "Markdown is still the best format for feeding into language models" <br/> - Simon Willison (co-creator of Django)
 
-Why Markdown + GPT? For a full rundown of the benefits and use cases, check out [Introducing 'Mark', a Markdown CLI tool for GPT4o](https://relston.github.io/markdown/gpt4o/cli/2024/06/07/introducing-mark.html)
+Why Markdown + LLMs? For a full rundown of the benefits and use cases, check out [Introducing 'Mark', a Markdown CLI tool for LLMs](https://relston.github.io/markdown/gpt4o/cli/2024/06/07/introducing-mark.html)
 
 ## Key Features
 - Interact with LLMs using Markdown
-- Visual recognition of markdown image references via GPT4o
+- Visual recognition of markdown image references via multi-modal LLMs
 - Local and remote links are scraped for context
-- GPT responses appended directly into Markdown files
+- LLM responses appended directly into Markdown files
 - `stdin` and `stdout` support for piping
 - Support for Image Generation 
 
@@ -55,7 +55,7 @@ mark path/to/markdown.md
 ```
 *Requires an OpenAI API key in the `OPENAI_API_KEY` environment variable*
 
-Also supports `stdin` with `stdout` for piping GPT responses into other tools
+Also supports `stdin` with `stdout` for piping LLM responses into other tools
 ```bash
 cat path/to/markdown.md | mark 
 # LLM response....
