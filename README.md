@@ -2,7 +2,7 @@
 ![License](https://img.shields.io/github/license/relston/mark)
 
 # Mark
-**Mark lets you seamlessly use markdown, images and links to interact with GPT4o**
+**Mark lets you seamlessly use markdown, images and links to interact with LLMs**
 
 > "Markdown is still the best format for feeding into language models" <br/> - Simon Willison (co-creator of Django)
 

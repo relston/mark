@@ -136,7 +136,6 @@ class Image(PageReference):
         return f"data:{mime_type};base64,{encoding}"
 
 
-
 class Link(PageReference):
     # Regular expression to find Markdown link syntax
     # it will match `[text](url)` but not `![text](url)`

@@ -1,6 +1,7 @@
 import pytest
 import os
 from unittest.mock import patch
+import llm
 
 
 @pytest.fixture(autouse=True)
@@ -23,7 +24,16 @@ def mock_stdout():
 
 @pytest.fixture
 def mock_llm_response():
-    with patch('mark.llm._call_completion') as mock:
+    with patch('llm.models.Model.prompt') as mock:
+        yield mock
+
+
+@pytest.fixture
+def mock_llm_get_model():
+    get_model_method = llm.get_model
+
+    with patch('llm.get_model') as mock:
+        mock.side_effect = get_model_method
         yield mock
 
 
