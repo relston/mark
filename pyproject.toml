@@ -1,6 +1,6 @@
 [project]
 name = "mark"
-version = "0.10.0"
+version = "0.10.1"
 description = "Mark lets you seamlessly use markdown, images and links to interact with LLMs"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -17,7 +17,7 @@ Issues = "https://github.com/relston/mark/issues"
 
 [tool.poetry]
 name = "mark"
-version = "0.10.0"
+version = "0.10.1"
 description = "Mark lets you seamlessly use markdown, images and links to interact with LLMs"
 authors = ["Ryan Elston <elston.ryan@gmail.com>"]
 

@@ -151,7 +151,8 @@ class TestCLI:
         mock_llm_response.assert_called_once_with(
             self.mock_markdown_file_content,
             system=self.default_expected_system_message,
-            attachments=self.default_expected_attachements
+            attachments=self.default_expected_attachements,
+            stream=False
         )
 
         # The markdown file will be updated with the response
@@ -175,7 +176,8 @@ class TestCLI:
         mock_llm_response.assert_called_once_with(
             self.mock_markdown_file_content,
             system=self.default_expected_system_message,
-            attachments=self.default_expected_attachements
+            attachments=self.default_expected_attachements,
+            stream=False
         )
 
         mock_stdout.assert_called_once_with("Test completion")
@@ -192,7 +194,8 @@ class TestCLI:
         mock_llm_response.assert_called_once_with(
             self.mock_markdown_file_content,
             system=self.default_expected_system_message,
-            attachments=self.default_expected_attachements
+            attachments=self.default_expected_attachements,
+            stream=False
         )
 
     def test_command_custom_agent(self, create_file, mock_llm_response):
@@ -212,7 +215,8 @@ class TestCLI:
         mock_llm_response.assert_called_once_with(
             self.mock_markdown_file_content,
             system=expected_system_message,
-            attachments=self.default_expected_attachements
+            attachments=self.default_expected_attachements,
+            stream=False
         )
 
         # The markdown file will be updated indicating the custom agent

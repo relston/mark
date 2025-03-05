@@ -1,7 +1,7 @@
 import os
 import click
 import llm
-from llm.default_plugins.openai_models import openai
+from llm.default_plugins.openai_models import openai, Chat, AsyncChat
 from mark.config import get_config
 from mark.llm_request import LLMRequest
 from mark.llm_response import LLMResponse, LLMImageResponse
@@ -85,6 +85,10 @@ def _call_generate_image(prompt, model):
 @handle_openai_errors
 def _llm_call_completion(llm_request: LLMRequest) -> str:
     model = llm.get_model(llm_request.model)
+    if isinstance(model, (Chat, AsyncChat)) and model.api_base == None:
+        # Backwards compatible with the older override
+        model.api_base = OPENAI_BASE_URL
+
     attachment = []
     for image in llm_request.images:
         if image.is_web_reference():
@@ -98,4 +102,6 @@ def _llm_call_completion(llm_request: LLMRequest) -> str:
     return model.prompt(
         llm_request.prompt,
         system=llm_request.system_content(),
-        attachments=attachment)
+        attachments=attachment,
+        stream=False # we do not support streaming
+    )
