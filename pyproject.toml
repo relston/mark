@@ -36,7 +36,7 @@ langchain = "^0.2.16"
 langchain-community = "^0.2.15"
 pyppeteer = "^2.0.0"
 markdownify = "^0.14.1"
-llm = "^0.21"
+llm = "^0.25"
 click-default-group = "^1.2.4"
 
 [tool.poetry.scripts]

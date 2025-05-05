@@ -427,6 +427,21 @@ files = [
 markers = {main = "sys_platform == \"win32\" or platform_system == \"Windows\"", dev = "sys_platform == \"win32\""}
 
 [[package]]
+name = "condense-json"
+version = "0.1.2"
+description = "Python function for condensing JSON using replacement strings"
+optional = false
+python-versions = ">=3.8"
+groups = ["main"]
+files = [
+    {file = "condense_json-0.1.2-py3-none-any.whl", hash = "sha256:bedc4f9de5c626483e57577adfebb9ef655a3b8ad15ab85401e2fdcc27aa37bb"},
+    {file = "condense_json-0.1.2.tar.gz", hash = "sha256:a161e1984122ad35801cc14ecfe2b38d9d638c8c089e04cb545d26300fdc485e"},
+]
+
+[package.extras]
+test = ["mypy", "pytest"]
+
+[[package]]
 name = "dataclasses-json"
 version = "0.6.7"
 description = "Easily serialize dataclasses to and from JSON."
@@ -1107,24 +1122,25 @@ langsmith-pyo3 = ["langsmith-pyo3 (>=0.1.0rc2,<0.2.0)"]
 
 [[package]]
 name = "llm"
-version = "0.21"
-description = "A CLI utility and Python library for interacting with Large Language Models, including OpenAI, PaLM and local models installed on your own machine."
+version = "0.25"
+description = "CLI utility and Python library for interacting with Large Language Models from organizations like OpenAI, Anthropic and Gemini plus local models installed on your own machine."
 optional = false
 python-versions = ">=3.9"
 groups = ["main"]
 files = [
-    {file = "llm-0.21-py3-none-any.whl", hash = "sha256:d045276c92d0eb4e5f2978123ad1a0f607085cdd454ef055731a55487ae5c0a6"},
-    {file = "llm-0.21.tar.gz", hash = "sha256:ac1717e7cb68275271ad90d8f045407e59215a69b4ccc222ef4e60c43edeb95e"},
+    {file = "llm-0.25-py3-none-any.whl", hash = "sha256:33b88933ad0f3cc71d9ed4a287f6a113096abb4acce32e85d9bfd49ad4650aee"},
+    {file = "llm-0.25.tar.gz", hash = "sha256:fe0bbe759cd57c678f82cf525573281f4a954867f45c303a24c573d73fed137a"},
 ]
 
 [package.dependencies]
 click = "*"
 click-default-group = ">=1.2.3"
+condense-json = ">=0.1.2"
 openai = ">=1.55.3"
 pip = "*"
 pluggy = "*"
 puremagic = "*"
-pydantic = ">=1.10.2"
+pydantic = ">=2.0.0"
 pyreadline3 = {version = "*", markers = "sys_platform == \"win32\""}
 python-ulid = "*"
 PyYAML = "*"
@@ -1133,7 +1149,7 @@ sqlite-migrate = ">=0.1a2"
 sqlite-utils = ">=3.37"
 
 [package.extras]
-test = ["black (==24.10.0)", "cogapp", "mypy (>=1.10.0)", "numpy", "pytest", "pytest-asyncio", "pytest-httpx (>=0.33.0)", "ruff", "types-PyYAML", "types-click", "types-setuptools"]
+test = ["black (>=25.1.0)", "build", "cogapp", "mypy (>=1.10.0)", "numpy", "pytest", "pytest-asyncio", "pytest-httpx (>=0.33.0)", "ruff", "types-PyYAML", "types-click", "types-setuptools"]
 
 [[package]]
 name = "markdownify"
@@ -2694,4 +2710,4 @@ type = ["pytest-mypy"]
 [metadata]
 lock-version = "2.1"
 python-versions = "^3.10"
-content-hash = "afd6ee4e01cc6d72d803c2ee7befc88dbdc962e5aa85c7e55259e6c053414782"
+content-hash = "591bcb75e8b2040a206bdbc2524e421a887abde5cf4c8af66d82b80e5c21f787"

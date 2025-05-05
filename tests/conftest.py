@@ -24,7 +24,7 @@ def mock_stdout():
 
 @pytest.fixture
 def mock_llm_response():
-    with patch('llm.models.Model.prompt') as mock:
+    with patch('llm.models._Model.prompt') as mock:
         yield mock
 
 
