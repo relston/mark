@@ -1,6 +1,6 @@
 [project]
 name = "mark"
-version = "0.10.2"
+version = "0.10.3"
 description = "Mark lets you seamlessly use markdown, images and links to interact with LLMs"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -17,13 +17,13 @@ Issues = "https://github.com/relston/mark/issues"
 
 [tool.poetry]
 name = "mark"
-version = "0.10.2"
+version = "0.10.3"
 description = "Mark lets you seamlessly use markdown, images and links to interact with LLMs"
 authors = ["Ryan Elston <elston.ryan@gmail.com>"]
 
 # Include additional files
 include = [
-    "templates/default_system_prompt.md"
+    { path = "templates", format = ["sdist", "wheel"] }
 ]
 
 [tool.poetry.dependencies]
