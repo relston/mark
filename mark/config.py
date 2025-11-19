@@ -1,11 +1,9 @@
 from datetime import datetime
 import os
-from importlib.resources import read_text
+from importlib import resources
 
 
 class Config:
-    DEFAULT_SYSTEM_PROMPT_TEMPLATE_PATH = 'templates/default_system_prompt.md'
-
     def __init__(self):
         self.config_dir = os.getenv(
             'MARK_CONFIG_PATH',
@@ -18,7 +16,9 @@ class Config:
             os.makedirs(self.system_prompts_dir)
 
         if not os.path.exists(self.default_system_prompt):
-            default_config = read_text('templates', 'default_system_prompt.md')
+            default_config = (
+                resources.files('mark') / 'templates' / 'default_system_prompt.md'
+            ).read_text(encoding='utf-8')
 
             with open(os.path.expanduser(self.default_system_prompt), "w") as file:
                 file.write(default_config)
