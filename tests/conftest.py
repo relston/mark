@@ -58,13 +58,46 @@ def create_file(tmp_path):
 
 @pytest.fixture
 def mock_web_page():
-    url_to_content = {}
+    """Mock crawl4ai's _crawl() function to return test data"""
+    from types import SimpleNamespace
+    from unittest.mock import AsyncMock, patch
+    
+    url_to_result = {}
 
-    def _mock(url, page_content):
-        url_to_content[url] = page_content
+    def _mock(url, markdown_content, title=None):
+        """Helper to set up mock data for a URL.
+        
+        Args:
+            url: The URL to mock
+            markdown_content: The markdown content to return (for Page.body)
+            title: The title to return in metadata
+        """
+        # Create a mock crawl4ai result structure
+        mock_markdown = SimpleNamespace(raw_markdown=markdown_content)
+        mock_metadata = {'title': title} if title else {}
+        
+        mock_result = SimpleNamespace(
+            markdown=mock_markdown,
+            metadata=mock_metadata,
+            url=url,
+            status_code=200,
+            success=True
+        )
+        url_to_result[url] = mock_result
 
-    with patch('mark.scraper.get_rendered_html') as mock:
-        def side_effect(url):
-            return url_to_content[url]
-        mock.side_effect = side_effect
+    async def mock_crawl(url):
+        """Mock _crawl() async function"""
+        if url in url_to_result:
+            return url_to_result[url]
+        # Default fallback
+        mock_markdown = SimpleNamespace(raw_markdown="")
+        return SimpleNamespace(
+            markdown=mock_markdown,
+            metadata={},
+            url=url,
+            status_code=200,
+            success=True
+        )
+
+    with patch('mark.scraper._crawl', new_callable=AsyncMock, side_effect=mock_crawl, create=True):
         yield _mock

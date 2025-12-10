@@ -60,10 +60,23 @@ Set up crawl4ai and understand its API surface
 ## Phase 2: Test Updates (TDD Approach)
 Update tests to work with crawl4ai mocking strategy
 
-- [ ] a) Update `conftest.py` fixture `mock_web_page` to mock crawl4ai's `AsyncWebCrawler.arun()` instead of `get_rendered_html()`
-- [ ] b) Ensure mock returns structure matching crawl4ai response: `markdown.raw_markdown`, `metadata` (no need to mock HTML since we're not using BeautifulSoup)
-- [ ] c) Update `test_timeout_error_handling` to mock `asyncio.TimeoutError` from crawl4ai context
-- [ ] d) Run tests and verify they fail with expected errors (TDD red phase)
+- [x] a) Update `conftest.py` fixture `mock_web_page` to mock crawl4ai's `_crawl()` function instead of `get_rendered_html()`
+- [x] b) Ensure mock returns structure matching crawl4ai response: `markdown.raw_markdown`, `metadata` (no need to mock HTML since we're not using BeautifulSoup)
+- [x] c) Update `test_timeout_error_handling` to mock `asyncio.TimeoutError` from crawl4ai context
+- [x] d) Run tests and verify they fail with expected errors (TDD red phase)
+
+### Phase 2 Results
+
+**Test Updates Completed:**
+- Updated `mock_web_page` fixture to mock `mark.scraper._crawl()` (using `create=True` since function doesn't exist yet)
+- Mock returns crawl4ai result structure: `SimpleNamespace` with `markdown.raw_markdown` and `metadata['title']`
+- Updated `test_page_scrape` to use new mock API: `mock_web_page(url, markdown_content, title)`
+- Updated `test_timeout_error_handling` to patch `_crawl` with `asyncio.TimeoutError`
+
+**TDD Red Phase Verified:**
+- Tests fail as expected because `scraper.get()` still uses old implementation (`get_rendered_html()`)
+- Mocks are correctly set up for Phase 3 implementation
+- Ready to proceed to Phase 3 where `_crawl()` will be implemented and tests should pass
 
 ## Phase 3: Implementation
 Replace scraper implementation while maintaining public API
