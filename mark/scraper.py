@@ -5,7 +5,13 @@ import asyncio
 import pyppeteer
 from bs4 import BeautifulSoup
 from markdownify import MarkdownConverter
-from langchain_core.documents import Document
+
+
+class Document:
+    """Simple document class to replace langchain Document."""
+    def __init__(self, page_content='', metadata=None):
+        self.page_content = page_content
+        self.metadata = metadata or {}
 
 DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' + \
     ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.198 Safari/537.36'
@@ -29,7 +35,7 @@ class Page(object):
 
     def to_document(self):
         return Document(
-            self.body,
+            page_content=self.body,
             metadata={'title': self.title, 'url': self.url}
         )
 

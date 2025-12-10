@@ -1,6 +1,6 @@
 [project]
 name = "mark"
-version = "0.10.4"
+version = "0.10.5"
 description = "Mark lets you seamlessly use markdown, images and links to interact with LLMs"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -17,7 +17,7 @@ Issues = "https://github.com/relston/mark/issues"
 
 [tool.poetry]
 name = "mark"
-version = "0.10.4"
+version = "0.10.5"
 description = "Mark lets you seamlessly use markdown, images and links to interact with LLMs"
 authors = ["Ryan Elston <elston.ryan@gmail.com>"]
 
@@ -33,8 +33,6 @@ PyYAML = "6.0.2"
 ipython = "8.32.0"
 click = "^8.1.8"
 beautifulsoup4 = "^4.12.3"
-langchain = "^0.2.16"
-langchain-community = "^0.2.15"
 pyppeteer = "^2.0.0"
 markdownify = "^0.14.1"
 llm = "^0.25"

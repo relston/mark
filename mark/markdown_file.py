@@ -1,10 +1,10 @@
 import os
 import re
-from langchain_core.documents import Document
 from io import TextIOWrapper
 from textwrap import dedent
 import click
 from mark import scraper
+from mark.scraper import Document
 import base64
 import mimetypes
 

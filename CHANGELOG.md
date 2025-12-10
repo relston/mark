@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+### [0.10.5] - 2025-12-09
+#### Removed
+- Removed langchain and langchain-community dependencies from pyproject.toml
+#### Added
+- Created a simple Document class in mark/scraper.py to replace langchain's Document
+
 ### [0.10.4] - 2025-11-19
 #### Fixed
 - Default system template moved into the main module for consistent packaging
