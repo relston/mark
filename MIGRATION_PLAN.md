@@ -81,17 +81,33 @@ Update tests to work with crawl4ai mocking strategy
 ## Phase 3: Implementation
 Replace scraper implementation while maintaining public API
 
-- [ ] a) Remove `pyppeteer`, `markdownify`, and `beautifulsoup4` imports from `scraper.py`
-- [ ] b) Add crawl4ai imports: `AsyncWebCrawler`, `BrowserConfig` (and any other needed)
-- [ ] c) Update `Page` class: remove `soup` parameter and attribute (tests don't use it)
-- [ ] d) Keep `Document` class unchanged
-- [ ] e) Create async helper `_crawl(url: str)` that uses `AsyncWebCrawler` with appropriate `BrowserConfig`
-- [ ] f) Update `get(url: str)` to call `asyncio.run(_crawl(url))` and convert crawl4ai response to `Page` instance
-- [ ] g) Map crawl4ai's `markdown.raw_markdown` to `Page.body`
-- [ ] h) Extract title from crawl4ai `metadata['title']`, set on `Page`
-- [ ] i) Implement error handling: catch `asyncio.TimeoutError` and return page with "Timeout while fetching page"
-- [ ] j) Implement error handling: catch other exceptions and return page with "BrowserError while fetching"
-- [ ] k) Remove helper functions: `get_rendered_html()`, `_render_page()`, `_clean_soup_from_html()`, `_markdown_from_soup()`
+- [x] a) Remove `pyppeteer`, `markdownify`, and `beautifulsoup4` imports from `scraper.py`
+- [x] b) Add crawl4ai imports: `AsyncWebCrawler`, `BrowserConfig` (and any other needed)
+- [x] c) Update `Page` class: remove `soup` parameter and attribute (tests don't use it)
+- [x] d) Keep `Document` class unchanged
+- [x] e) Create async helper `_crawl(url: str)` that uses `AsyncWebCrawler` with appropriate `BrowserConfig`
+- [x] f) Update `get(url: str)` to call `asyncio.run(_crawl(url))` and convert crawl4ai response to `Page` instance
+- [x] g) Map crawl4ai's `markdown.raw_markdown` to `Page.body`
+- [x] h) Extract title from crawl4ai `metadata['title']`, set on `Page`
+- [x] i) Implement error handling: catch `asyncio.TimeoutError` and return page with "Timeout while fetching page"
+- [x] j) Implement error handling: catch other exceptions and return page with "BrowserError while fetching"
+- [x] k) Remove helper functions: `get_rendered_html()`, `_render_page()`, `_clean_soup_from_html()`, `_markdown_from_soup()`
+
+### Phase 3 Results
+
+**Implementation Complete:**
+- Removed all old dependencies: `pyppeteer`, `markdownify`, `beautifulsoup4`, `re`, `warnings`
+- Added crawl4ai imports: `AsyncWebCrawler`, `BrowserConfig`
+- Updated `Page` class: removed `soup` parameter and attribute
+- Created `_crawl(url)` async function using `AsyncWebCrawler` with `BrowserConfig(headless=True)`
+- Updated `get(url)` to use `asyncio.run(_crawl(url))` and convert crawl4ai result to `Page`
+- Error handling: catches `asyncio.TimeoutError` and general `Exception`
+- All old helper functions removed
+
+**Test Results:**
+- ✅ `test_page_scrape` - PASSED
+- ✅ `test_timeout_error_handling` - PASSED
+- All scraper tests passing (TDD green phase achieved!)
 
 ## Phase 4: Cleanup and Verification
 Remove old dependencies and verify everything works

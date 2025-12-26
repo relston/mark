@@ -64,20 +64,15 @@ class TestCLI:
             binary=True)
         create_file("./docs/another-reference.md", "Another reference content")
 
-        # and the external url link returns this response
-        html_content = """
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <title>Basic HTML Page</title>
-        </head>
-        <body>
-            <h1>Welcome to My Page</h1>
-            <a href="https://www.example.com">Visit Example.com</a>
-        </body>
-        </html>
-        """
-        mock_web_page('https://example.com/some-article', html_content)
+        # and the external url link returns this markdown response
+        # (matching the format expected by the test)
+        expected_markdown = '\n\nBasic HTML Page\n\nWelcome to My Page\n' + \
+            '==================\n\n[Visit Example.com](https://www.example.com)\n\n'
+        mock_web_page(
+            'https://example.com/some-article',
+            markdown_content=expected_markdown,
+            title='Basic HTML Page'
+        )
 
         # and llm returning this response
         mock_llm_response.return_value = "Test completion"
