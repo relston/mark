@@ -1,5 +1,6 @@
 import click
 import asyncio
+import sys
 from crawl4ai import AsyncWebCrawler, BrowserConfig
 
 
@@ -37,6 +38,29 @@ async def _crawl(url: str):
         return await crawler.arun(url)
 
 
+def _check_browsers_installed():
+    """Check if Playwright browsers are installed."""
+    try:
+        # Try both playwright and patchright (crawl4ai uses patchright)
+        try:
+            from playwright.sync_api import sync_playwright
+        except ImportError:
+            try:
+                from patchright.sync_api import sync_playwright
+            except ImportError:
+                return False
+        
+        with sync_playwright() as p:
+            browser = p.chromium
+            browser_path = browser.executable_path
+            if browser_path:
+                from pathlib import Path
+                return Path(browser_path).exists()
+    except Exception:
+        pass
+    return False
+
+
 def get(url: str) -> Page:
     """Fetch and process a URL, returning a Page instance."""
     try:
@@ -57,5 +81,15 @@ def get(url: str) -> Page:
         click.echo(f"Timeout while fetching {url}")
         return Page(url, body="Timeout while fetching page", title=None)
     except Exception as exc:
+        # Check if this is a browser installation error
+        error_msg = str(exc)
+        if "Executable doesn't exist" in error_msg or "BrowserType.launch" in str(type(exc).__name__):
+            click.echo(f"Browser not found while fetching {url}", err=True)
+            click.echo("Playwright browsers need to be installed. Run:", err=True)
+            click.echo("  mark-setup-browsers", err=True)
+            click.echo("Or manually:", err=True)
+            click.echo("  playwright install chromium", err=True)
+            return Page(url, body="BrowserError while fetching", title=None)
+        
         click.echo(f"BrowserError while fetching {url}")
         return Page(url, body="BrowserError while fetching", title=None)

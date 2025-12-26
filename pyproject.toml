@@ -38,6 +38,7 @@ click-default-group = "^1.2.4"
 
 [tool.poetry.scripts]
 mark = "mark.cli:mark_cli"
+mark-setup-browsers = "mark.setup_browsers:main"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"

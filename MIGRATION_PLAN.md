@@ -149,9 +149,32 @@ Remove old dependencies and verify everything works
 ## Phase 5: Documentation and CI Updates
 Update documentation and CI if needed
 
-- [ ] a) Check if README mentions pyppeteer or browser requirements, update if needed
-- [ ] b) Update CI workflow if crawl4ai requires browser setup (`crawl4ai-setup` command)
-- [ ] c) Document any new runtime requirements (e.g., playwright browsers) in README if applicable
+- [x] a) Check if README mentions pyppeteer or browser requirements, update if needed
+- [x] b) Update CI workflow if crawl4ai requires browser setup (`crawl4ai-setup` command)
+- [x] c) Document any new runtime requirements (e.g., playwright browsers) in README if applicable
+- [x] d) Create post-install script `mark-setup-browsers` to install browsers automatically
+- [x] e) Add helpful error messages in scraper when browsers are missing
+
+### Phase 5 Results
+
+**Documentation Updates:**
+- ✅ Updated README with browser setup instructions
+- ✅ Added `mark-setup-browsers` command documentation
+- ✅ Added browser setup to Development section
+
+**Post-Install Script:**
+- ✅ Created `mark/setup_browsers.py` script
+- ✅ Added `mark-setup-browsers` CLI command to `pyproject.toml`
+- ✅ Script checks if browsers are installed before installing
+- ✅ Supports both `patchright` (crawl4ai) and `playwright`
+- ✅ Provides helpful error messages
+
+**Error Handling:**
+- ✅ Enhanced scraper error handling to detect missing browsers
+- ✅ Provides clear instructions: `mark-setup-browsers` or `playwright install chromium`
+
+**Remaining:**
+- [ ] Update CI workflow to install browsers (see next step)
 
 ## Phase 6: Optional Enhancements
 Future improvements that can be done post-migration
