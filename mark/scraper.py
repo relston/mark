@@ -1,10 +1,7 @@
-import warnings
 import click
-import re
 import asyncio
-import pyppeteer
-from bs4 import BeautifulSoup
-from markdownify import MarkdownConverter
+import sys
+from crawl4ai import AsyncWebCrawler, BrowserConfig
 
 
 class Document:
@@ -13,20 +10,15 @@ class Document:
         self.page_content = page_content
         self.metadata = metadata or {}
 
-DEFAULT_USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)' + \
-    ' AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.5735.198 Safari/537.36'
-
 
 class Page(object):
     def __init__(
             self,
             url,
             body: str = None,
-            soup: BeautifulSoup = None,
             title: str = None):
         self.url = url
         self.body = body
-        self.soup = soup
         self.title = title
 
     def with_title(self, title: str):
@@ -40,67 +32,64 @@ class Page(object):
         )
 
 
+async def _crawl(url: str):
+    """Async helper to crawl a URL using crawl4ai."""
+    async with AsyncWebCrawler(config=BrowserConfig(headless=True)) as crawler:
+        return await crawler.arun(url)
+
+
+def _check_browsers_installed():
+    """Check if Playwright browsers are installed."""
+    try:
+        # Try both playwright and patchright (crawl4ai uses patchright)
+        try:
+            from playwright.sync_api import sync_playwright
+        except ImportError:
+            try:
+                from patchright.sync_api import sync_playwright
+            except ImportError:
+                return False
+        
+        with sync_playwright() as p:
+            browser = p.chromium
+            browser_path = browser.executable_path
+            if browser_path:
+                from pathlib import Path
+                return Path(browser_path).exists()
+    except Exception:
+        pass
+    return False
+
+
 def get(url: str) -> Page:
-    raw_html = get_rendered_html(url)
-    clean_soup = _clean_soup_from_html(raw_html)
-    markdown = _markdown_from_soup(clean_soup)
-    page = Page(url, body=markdown, soup=clean_soup)
-
-    if title := clean_soup.find('title'):
-        page.with_title(title.text)
-
-    return page
-
-
-def get_rendered_html(url: str) -> str:
+    """Fetch and process a URL, returning a Page instance."""
     try:
-        return asyncio.run(_render_page(url))
-    except pyppeteer.errors.BrowserError:
-        click.echo(f"BrowserError while fetching {url}")
-        return "BrowserError while fetching"
-    except pyppeteer.errors.TimeoutError:
+        result = asyncio.run(_crawl(url))
+        
+        # Extract markdown content
+        markdown_content = result.markdown.raw_markdown if result.markdown else ""
+        
+        # Extract title from metadata
+        title = result.metadata.get('title') if result.metadata else None
+        
+        # Create Page instance
+        page = Page(url, body=markdown_content, title=title)
+        
+        return page
+        
+    except asyncio.TimeoutError:
         click.echo(f"Timeout while fetching {url}")
-        return "Timeout while fetching page"
-
-
-async def _render_page(url: str) -> str:
-    browser = None
-    try:
-        browser = await pyppeteer.launch()
-        page = await browser.newPage()
-        await page.setUserAgent(DEFAULT_USER_AGENT)
-        await page.goto(url)
-        rendered_html = await page.content()
-    finally:
-        if browser:
-            await browser.close()
-    return rendered_html
-
-
-def _clean_soup_from_html(html: str) -> BeautifulSoup:
-    # warnings.filterwarnings("ignore")
-
-    soup = BeautifulSoup(html, 'html.parser')
-
-    # List of tags to decompose
-    tags_to_decompose = ['script', 'meta', 'link', 'style']
-
-    for tag in soup.find_all(True):
-        # Remove class attributes
-        if 'class' in tag.attrs:
-            del tag['class']
-
-        # Remove style attributes
-        if 'style' in tag.attrs:
-            del tag['style']
-
-        # Decompose unwanted tags
-        if tag.name in tags_to_decompose:
-            tag.decompose()
-
-    return soup
-
-
-def _markdown_from_soup(soup: BeautifulSoup) -> str:
-    raw_markdown_text = MarkdownConverter().convert_soup(soup)
-    return re.sub(r'\n{3,}', '\n\n', raw_markdown_text)
+        return Page(url, body="Timeout while fetching page", title=None)
+    except Exception as exc:
+        # Check if this is a browser installation error
+        error_msg = str(exc)
+        if "Executable doesn't exist" in error_msg or "BrowserType.launch" in str(type(exc).__name__):
+            click.echo(f"Browser not found while fetching {url}", err=True)
+            click.echo("Playwright browsers need to be installed. Run:", err=True)
+            click.echo("  mark-setup-browsers", err=True)
+            click.echo("Or manually:", err=True)
+            click.echo("  playwright install chromium", err=True)
+            return Page(url, body="BrowserError while fetching", title=None)
+        
+        click.echo(f"BrowserError while fetching {url}")
+        return Page(url, body="BrowserError while fetching", title=None)

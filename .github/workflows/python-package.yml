@@ -29,6 +29,9 @@ jobs:
         python -m pip install --upgrade pip
         python -m pip install poetry flake8 pytest
         poetry install --with dev
+    - name: Install Playwright browsers
+      run: |
+        poetry run playwright install chromium || poetry run python -m patchright install chromium
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names

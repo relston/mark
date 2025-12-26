@@ -48,6 +48,21 @@ This allows you to carry on a conversation directly in the markdown file - or si
 pip install mark
 ```
 
+## Browser Setup (Required for Web Scraping)
+
+Mark uses Playwright browsers to scrape web links. After installing mark, you need to install the browser binaries:
+
+```bash
+mark-setup-browsers
+```
+
+Or manually:
+```bash
+playwright install chromium
+```
+
+**Note:** This only needs to be done once after installation. The browser binaries are downloaded to `~/.cache/ms-playwright/` (~100MB).
+
 # Usage
 By default, `mark` will read a markdown file, extract any context references, and send them to the LLM. The responses are then appended to the markdown file.
 ```bash
@@ -90,6 +105,12 @@ This will generate an image using the 'dall-e-3' model and append it to the mark
 poetry install
 ```
 *[Requires poetry](https://python-poetry.org/docs/)*
+
+After installation, install Playwright browsers:
+```bash
+poetry run mark-setup-browsers
+# Or: poetry run playwright install chromium
+```
 
 ## Run the CLI Tool locally
 ```bash

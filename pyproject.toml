@@ -1,6 +1,6 @@
 [project]
 name = "mark"
-version = "0.10.5"
+version = "0.11.0"
 description = "Mark lets you seamlessly use markdown, images and links to interact with LLMs"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -17,7 +17,7 @@ Issues = "https://github.com/relston/mark/issues"
 
 [tool.poetry]
 name = "mark"
-version = "0.10.5"
+version = "0.11.0"
 description = "Mark lets you seamlessly use markdown, images and links to interact with LLMs"
 authors = ["Ryan Elston <elston.ryan@gmail.com>"]
 
@@ -32,14 +32,13 @@ python = "^3.10"
 PyYAML = "6.0.2"
 ipython = "8.32.0"
 click = "^8.1.8"
-beautifulsoup4 = "^4.12.3"
-pyppeteer = "^2.0.0"
-markdownify = "^0.14.1"
+crawl4ai = "^0.7.8"
 llm = "^0.25"
 click-default-group = "^1.2.4"
 
 [tool.poetry.scripts]
 mark = "mark.cli:mark_cli"
+mark-setup-browsers = "mark.setup_browsers:main"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.4"
