@@ -8,7 +8,7 @@ class Config:
         self.config_dir = os.getenv(
             'MARK_CONFIG_PATH',
             os.path.expanduser("~/.mark"))
-        self.system_prompts_dir = f"/{self.config_dir}/system_prompts"
+        self.system_prompts_dir = os.path.join(self.config_dir, "system_prompts")
         self.default_system_prompt = f"{self.system_prompts_dir}/default.md"
         self.log_folder = f"{self.config_dir}/logs"
 
